@@ -1,0 +1,77 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #016197;
+  --ifm-color-primary-dark: #015788;
+  --ifm-color-primary-darker: #015280;
+  --ifm-color-primary-darkest: #01446a;
+  --ifm-color-primary-light: #016ba6;
+  --ifm-color-primary-lighter: #0170ae;
+  --ifm-color-primary-lightest: #017ec4;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #6acdf6;
+  --ifm-color-primary-dark: #49c2f4;
+  --ifm-color-primary-darker: #38bcf3;
+  --ifm-color-primary-darkest: #0ea8e8;
+  --ifm-color-primary-light: #8bd8f8;
+  --ifm-color-primary-lighter: #9cdef9;
+  --ifm-color-primary-lightest: #ceeefc;
+  --docusaurus-highlighted-code-line-bg: rgba(14, 14, 17, 1);
+}
+
+* {
+  font-family: montserrat, sans-serif;
+}
+
+.theme-doc-footer-edit-meta-row {
+  display: none;
+}
+
+.navbar__items:after,
+.navbar__items:before {
+  content: "";
+  flex: 1;
+}
+
+/* @media screen and (min-width: 997px){
+
+} */
+
+.navbar__brand {
+  left: 20px;
+  margin-right: auto;
+  position: absolute;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+}
+
+.footer .container {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0;
+}
+
+.footer .footer__links {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.footer .footer__bottom {
+  margin-right: 10%;
+}
