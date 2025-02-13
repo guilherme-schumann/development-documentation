@@ -13,4 +13,4 @@ If the <code>notification_url</code> was provided when creating the payment, you
 }
 ```
 
-Once the callback received, check the updated status of the payment via **[Payments Status](#payments-status)**
+Once the callback received, check the updated status of the payment via **[Payments Status](#)**

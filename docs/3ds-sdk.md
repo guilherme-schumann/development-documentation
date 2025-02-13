@@ -8,7 +8,7 @@ In order to integrate 3DS 2.0 payments in your checkout.
 
 ## Prerequisite
 
-- Host the 3DS SDK available **[here](#our-api)**.
+- Host the 3DS SDK available **[here](https://checkout-sandbox.letpay.io/demo.html)**.
 - Have valid contract ID.
 - Have notification URL for payment status change callbacks.
 

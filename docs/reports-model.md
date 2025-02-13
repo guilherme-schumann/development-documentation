@@ -281,7 +281,7 @@ Allows scheduling a report to be run at a specific time.
 
 The Reports Module API enables merchants to create customized reports, apply filters, aggregate data, and schedule executions. It provides flexibility to format reports according to business needs.
 
-For further questions, contact **[support](#support)**.
+For further questions, contact **[support](/docs/introduction)**.
 
 
 
