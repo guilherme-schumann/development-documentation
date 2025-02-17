@@ -80,25 +80,25 @@ const config: Config = {
           label: "Docs",
         },
         {
-          to: "/docs/introduction",
+          to: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
           label: "API References",
           position: "left",
         },
         {
-          to: "/docs/introduction",
+          to: "/blog",
           label: "Releases",
           position: "left",
         },
-        {
-          to: "/docs/introduction",
-          label: "Support",
-          position: "left",
-        },
-        {
-          to: "/docs/introduction",
-          label: "Status Page",
-          position: "left",
-        },
+        // {
+        //   to: "/docs/introduction",
+        //   label: "Support",
+        //   position: "left",
+        // },
+        // {
+        //   to: "/docs/introduction",
+        //   label: "Status Page",
+        //   position: "left",
+        // },
         {
           href: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
           label: "Postman",
@@ -122,20 +122,20 @@ const config: Config = {
             },
             {
               label: "API References",
-              to: "/docs/introduction",
+              to: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
             },
             {
               label: "Releases",
-              to: "/docs/introduction",
+              to: "/blog",
             },
-            {
-              label: "Support",
-              to: "/docs/introduction",
-            },
-            {
-              label: "Status Page",
-              to: "/docs/introduction",
-            },
+            // {
+            //   label: "Support",
+            //   to: "/docs/introduction",
+            // },
+            // {
+            //   label: "Status Page",
+            //   to: "/docs/introduction",
+            // },
           ],
         },
         {

@@ -155,6 +155,15 @@ You can perform calculations between fields, such as:
 - Subtracting fees from the total amount.
 - Summing multiple columns.
 
+#### Available Arithmetic Operations
+
+You can perform different types of calculations, such as:
+- <code>Addition (+):</code> Summing multiple fields.
+- <code>Subtraction (-):</code> Calculating differences between fields.  
+- <code>Multiplication (*):</code> Multiplying values for weighted calculations.  
+- <code>Division (/):</code> Finding ratios or percentages.  
+- <code>Percentage (%):</code> Calculating percentage values based on fields.  
+
 Example: To calculate net revenue (Amount - Fee):
 
 ```jsx title="json"
@@ -179,7 +188,8 @@ This returns the difference between <code>Amount</code> and <code>Fee</code>.
 A Calculated Field allows you to perform arithmetic operations between multiple fields and return the result as a new field. This is useful for generating custom values in reports, such as net revenue, total sales, or profit margins. The result is exported in a CSV sheet for further analysis.
 This will return a new column in the CSV sheet that represents the difference between Amount and Fee.
 
-Available Arithmetic Operations
+#### Available Arithmetic Operations
+
 You can perform different types of calculations, such as:
 - <code>Addition (+):</code> Summing multiple fields.
 - <code>Subtraction (-):</code> Calculating differences between fields.  
@@ -260,7 +270,6 @@ If you want to retrieve only transactions from the current month, you can use:
 ```
 
 These values provide a flexible way to filter data dynamically, ensuring reports remain up to date without manual adjustments.
-
 
 ## 2. Get Report Types
 
