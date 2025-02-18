@@ -69,6 +69,7 @@ const config: Config = {
       logo: {
         alt: 'epag Docs - Logo',
         src: 'img/Image - epag - Docs.svg',
+        srcDark: 'img/Image - epag - Docs-dark.svg',
       },
       items: [
         {
@@ -93,6 +94,7 @@ const config: Config = {
       logo: {
         alt: "epag Docs - Logo",
         src: "img/Image - epag - Docs.svg",
+        srcDark: 'img/Image - epag - Docs-dark.svg',
       },
       style: "light",
       links: [
