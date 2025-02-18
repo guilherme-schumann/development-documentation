@@ -99,11 +99,6 @@ const config: Config = {
         //   label: "Status Page",
         //   position: "left",
         // },
-        {
-          href: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
-          label: "Postman",
-          position: "right",
-        },
       ],
     },
     footer: {
@@ -160,15 +155,6 @@ const config: Config = {
             {
               label: "Prohibited",
               to: "https://www.epag.com/en/legal/prohibited/",
-            },
-          ],
-        },
-        {
-          title: "Test API in Postman",
-          items: [
-            {
-              label: "Postman",
-              href: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
             },
           ],
         },

@@ -1,0 +1,92 @@
+---
+sidebar_position: 25
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Payment Status
+
+```jsx
+https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN
+```
+
+## Description
+
+This HTTP GET request is used to retrieve the current status of a transaction identified by the <code>paymentToken</code>. It should be utilized after receiving a callback notification indicating that a transaction has been updated.
+
+### Request
+
+- Path parameter:
+  - <code>paymentToken (string):</code> The unique identifier of the transaction.
+
+
+### Response
+The response will contain the following fields:
+
+paymentToken (string): The unique identifier of the payment transaction.
+
+- <code>createdAt</code> (string/date/yyyy-MM-dd'T'HH:mm:ss.SSS): The timestamp indicating the creation time of the transaction.
+- <code>transactionStatus</code> (string): The status of the payment transaction.
+- <code>expirationDate:</code> (string/date/yyyy-MM-dd'T'HH:mm:ss.SSS): The maximum period defined for making a payment.
+- <code>errorCode:</code> (string): Code for payment decline.
+- <code>currency</code> (string): The currency used for the transaction.
+- <code>mount_received</code> (number): The amount received for the transaction.
+- <code>refunded_amount</code> (number): The refunded amount for the transaction.
+- <code>reference</code> (string): The reference associated with the transaction.
+- <code>cancellation_details</code> (object): An object containing the description of the cancellation details, if any.
+  - <code>description</code> (string): Description of the cancellation details, if applicable.
+- <code>extra_data</code> (object): Additional data related to the transaction.
+  - <code>my-conciliation-number</code> (string): The conciliation number associated with the transaction.
+- <code>refresh_token</code> (string): The refresh token associated with the transaction.
+
+### Usage
+
+Replace <code>https://api-sandbox.epag.io</code> with the base URL and <code>MY_PAYMENT_TOKEN</code> with the actual payment token to retrieve the status of the specific transaction.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+#### Example Request
+
+<Tabs>
+  <TabItem value="success" label="200 - Success" default>
+    #### Example Request
+      ```jsx title="200 - Success"
+          curl --location 'https://api-sandbox.epag.io/identityValidation/CONTRACT_ID/BR/12345678909'
+      ```
+    
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ``` 
+      ```jsx title="Body"
+          {
+            "document": "12345678909",
+            "status": "VALID_DOCUMENT"
+          }
+      ```      
+  </TabItem>
+  <TabItem value="unauthorized" label="401 - Unauthorized">
+    #### Example Request
+      ```jsx title="401 - Unauthorized"
+          curl --location 'https://api-sandbox.epag.io/identityValidation/CONTRACT_ID/BR/12345678909'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-05-14T18:21:23.021+00:00",
+            "status": 401,
+            "error": "Unauthorized",
+            "message": "Access Denied",
+            "path": "/identityValidation/CONTRACT_ID/BR/12345678909"
+          }
+      ```
+  </TabItem>
+</Tabs>

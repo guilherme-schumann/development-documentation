@@ -1,0 +1,86 @@
+---
+sidebar_position: 23
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Get Tax ID Document Status
+
+```jsx
+https://api-sandbox.epag.io/identityValidation/CONTRACT_ID/BR/TAX_ID
+```
+
+## Retrieve Identity Validation Data
+
+This endpoint makes an HTTP GET request to retrieve identity validation data for a specific contract, country, and tax ID.
+
+## Supported Countries and IDs:
+
+- Brazil: CPF, CNPJ
+
+## Request
+
+- Path Parameters
+- <code>CONTRACT_ID (string):</code> The ID of the contract for which identity validation data is being retrieved.
+- <code>BR (string):</code> The country code for Brazil.
+- <code>TAX_ID (string):</code> The tax identification number for the individual.
+
+## Response
+
+The response for this request will be a JSON object containing the identity validation data. To document the response as a JSON schema, the following properties can be included:
+
+- <code>property1 (type):</code> Description of property1.
+
+- <code>property2 (type):</code> Description of property2.
+
+...
+
+Please note that the actual properties and their descriptions will depend on the structure of the response data.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+#### Example Request
+
+<Tabs>
+  <TabItem value="valid-document" label="200 - Valid Document" default>
+    #### Example Request
+      ```jsx title="200 - Valid Document"
+          curl --location 'https://api-sandbox.epag.io/identityValidation/CONTRACT_ID/BR/12345678909'
+      ```
+    
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ``` 
+      ```jsx title="Body"
+          {
+            "document": "12345678909",
+            "status": "VALID_DOCUMENT"
+          }
+      ```      
+  </TabItem>
+  <TabItem value="unauthorized" label="401 - Unauthorized">
+    #### Example Request
+      ```jsx title="401 - Unauthorized"
+          curl --location 'https://api-sandbox.epag.io/identityValidation/CONTRACT_ID/BR/12345678909'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-05-14T18:21:23.021+00:00",
+            "status": 401,
+            "error": "Unauthorized",
+            "message": "Access Denied",
+            "path": "/identityValidation/CONTRACT_ID/BR/12345678909"
+          }
+      ```
+  </TabItem>
+</Tabs>
