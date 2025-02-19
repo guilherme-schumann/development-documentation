@@ -74,9 +74,15 @@ const config: Config = {
       items: [
         {
           type: "docSidebar",
-          sidebarId: "tutorialSidebar",
+          sidebarId: "docSidebar",
           position: "left",
           label: "Docs",
+        },
+        {
+          type: "docSidebar",
+          sidebarId: "checkoutSidebar",
+          position: "left",
+          label: "Checkout",
         },
         {
           to: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
@@ -104,6 +110,10 @@ const config: Config = {
             {
               label: "Docs",
               to: "/docs/introduction",
+            },
+            {
+              label: "Checkout",
+              to: "/docs/Checkout/",
             },
             {
               label: "API References",

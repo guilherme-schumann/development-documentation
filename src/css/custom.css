@@ -57,27 +57,18 @@ h6 {
   display: none;
 }
 
-.navbar__items:after,
-.navbar__items:before {
-  content: "";
-  flex: 1;
-}
-.navbar__brand {
-  left: 20px;
-  margin-right: auto;
-  position: absolute;
-}
-
-/* @media screen and (max-width: 997px){
-  .navbar__items {
-    margin-left: auto !important;
+@media screen and (min-width: 997px){
+  .navbar__items:after,
+  .navbar__items:before {
+    content: "";
+    flex: 1;
   }
-
   .navbar__brand {
-    position: absolute;
     left: 20px;
+    margin-right: auto;
+    position: absolute;
   }
-} */
+}
 
 /* DEIXA AS OPÇÕES DAS TABS SEM QUEBRA DE LINHA */
 .tabs__item {
