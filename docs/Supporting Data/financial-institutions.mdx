@@ -1,0 +1,117 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Financial Institutions
+
+```jsx
+https://api-sandbox.epag.io/financialInstitution
+```
+
+## Financial Institution Details
+
+This endpoint retrieves the details of financial institutions in Brazil.
+
+### Response
+
+```jsx
+    {
+      "type": "object",
+      "properties": {
+        "institutionName": {
+          "type": "string",
+          "description": "The name of the financial institution"
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the financial institution"
+        },
+        "assets": {
+          "type": "number",
+          "description": "The total assets of the financial institution"
+        },
+        "numEmployees": {
+          "type": "integer",
+          "description": "The number of employees in the financial institution"
+        }
+      }
+    }
+```
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+#### Example Request
+
+<Tabs>
+  <TabItem value="success" label="200 - Success" default>
+    #### Example Request
+      ```jsx title="200 - Success"
+          curl --location 'https://api-sandbox.epag.io/financialInstitution' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN'
+      ```
+    
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ``` 
+      ```jsx title="Body"
+          {
+            "financial_institutions": [
+              {
+                "code": "246",
+                "name": "BCO ABC BRASIL S.A.",
+                "full_name": "Banco ABC Brasil S.A."
+              }
+            ],
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```      
+  </TabItem>
+    <TabItem value="filtered-by-code" label="200 - Filtered By Code" default>
+    #### Example Request
+      ```jsx title="200 - Filtered By Code"
+        curl --location 'https://api-sandbox.epag.io/financialInstitution/246' \
+        --header 'X-Auth-Token: MY_ACCESS_TOKEN'
+      ```
+    
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ``` 
+      ```jsx title="Body"
+          {
+            "financial_institutions": [
+              {
+                "code": "246",
+                "name": "BCO ABC BRASIL S.A.",
+                "full_name": "Banco ABC Brasil S.A."
+              }
+            ],
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```      
+  </TabItem>
+  <TabItem value="unauthorized" label="401 - Unauthorized" default>
+    #### Example Request
+      ```jsx title="401 - Unauthorized"
+          curl --location 'https://api-sandbox.epag.io/financialInstitution' \
+          --header 'X-Auth-Token: INVALID_ACCESS_TOKEN'
+      ```
+    
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ``` 
+      ```jsx title="Body"
+        {
+          "timestamp": "2024-05-15T19:52:26.833+00:00",
+          "status": 401,
+          "error": "Unauthorized",
+          "message": "Access Denied",
+          "path": "/financialInstitution"
+        }
+      ```      
+  </TabItem>
+</Tabs>

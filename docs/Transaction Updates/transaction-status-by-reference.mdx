@@ -1,0 +1,106 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Transaction Status By Reference
+
+```jsx
+https://api-sandbox.epag.io/payment/reference/MY_REFERENCE_ID
+```
+
+## Get Payment Details by Reference ID
+
+When the transaction ID is not available, use the reference ID with this endpoint to retrieve the corresponding payment details.
+
+### Request
+
+- Method: GET
+- URL: `https://api-sandbox.epag.io/payment/reference/MY_REFERENCE_ID`
+
+### Response
+
+The response for this request is a JSON object with the following schema:
+
+```jsx
+{
+  {
+      "payments": [
+          {
+              "paymentToken": "",
+              "createdAt": "",
+              "transactionStatus": "",
+              "currency": "",
+              "amount_received": 10,
+              "refunded_amount": 0,
+              "reference": "",
+              "extra_data": {
+                  "my-conciliation-number": ""
+              }
+          }
+      ],
+      "refresh_token": ""
+  }
+}
+```
+
+The payments array contains the payment details, including `paymentToken`, `createdAt`, `transactionStatus`, `expiration_date`, `currency`, `refunded_amount`, `reference`, and `extra_data` which may include additional information related to the payment. The `refresh_token` field may also be included in the response.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+<Tabs>
+  <TabItem value="success" label="200 - Success" default>
+    #### Example Request
+      ```jsx title="200 - Success"
+          curl --location 'https://api-sandbox.epag.io/payment/reference/MY_REFERENCE_ID' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN'
+      ```
+    
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ``` 
+      ```jsx title="Body"
+          {
+            "payments": [
+              {
+                "paymentToken": "bf1fe0df-8f22-4e86-a718-db9cad56e845",
+                "createdAt": "2024-01-16T13:26:38.605",
+                "transactionStatus": "PAID",
+                "currency": "BRL",
+                "amount_received": 10,
+                "refunded_amount": 0,
+                "reference": "MY_REFERENCE_ID",
+                "expirationDate": "2024-01-18T13:26:38.000",
+                "extra_data": {
+                  "my-conciliation-number": "xxxxxx"
+                }
+              }
+            ],
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```      
+  </TabItem>
+  <TabItem value="unauthorized" label="401 - Unauthorized">
+    #### Example Request
+      ```jsx title="401 - Unauthorized"
+          curl --location 'https://api-sandbox.epag.io/payment/reference/MY_REFERENCE_ID' \
+          --header 'X-Auth-Token: INVALID_ACCESS_TOKEN'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-01-19T12:45:12.511+0000",
+            "status": 401,
+            "error": "Unauthorized",
+            "message": "Access Denied",
+            "path": "/payment/reference/MY_REFERENCE_ID"
+          }
+      ```
+  </TabItem>
+</Tabs>
