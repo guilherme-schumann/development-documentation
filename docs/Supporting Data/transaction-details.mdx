@@ -1,0 +1,148 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Transaction Details
+
+```jsx
+https://api-sandbox.epag.io/transactionDetails/MY_PAYMENT_TOKEN
+```
+
+## Get Transaction Details
+
+### Description
+
+This endpoint retrieves the details for a specific transaction identified by the `paymentToken`.
+This method is designed to retrieve detailed information about a transaction and **is not intended** for use within the core transactional flow.
+
+### Response Fields
+
+- `general_info` (object): Transaction details.
+  - `transaction_status` (string): Current status of this transaction.
+  - `transaction_id` (string): Unique payment identification for this payment.
+  - `external_id` (string): External code created by merchant to reference the payment.
+  - `project_id` (string): Merchant's contract id.
+- `customer_info` (object): Transaction's person details.
+  - `customer_id` (string): The transaction's person identifier.
+  - `tax_id` (string): Unique identifier for the transaction's person in country tax system (e.g. in Brazil: CPF).
+  - `customer_contact` (string): The transaction's person contact email.
+  - `order_ip` (string): Remote IP Address.
+  - `order_ip_country` (string): Remote IP Country.
+- `payment_info` (object): Payment order details.
+  - `order_method` (string): The payment method.
+  - `order_method_country` (string): The payment order country.
+  - `card_number` (string): Masked credit card number.
+  - `card_scheme` (string): Card brand. Possible values: VISA, MASTER, ELO, AMERICAN_EXPRESS, DINERS_CLUB, DISCOVER, JCB.
+  - `order_amount` (float): Total amount of the payment.
+  - `order_currency` (string): Asset used on payment order.
+  - `payment_amount`: (float): Total amount for customer (amount + customer fees).
+  - `payment_currency` (string): Asset used on payment transaction.
+  - `refunded_amount`: (float): Refunded amount.
+  - `error_code`: (string): Code for payment decline.
+  - `error_description`: (string): Reason for payment decline.
+  - `expiration_date`: (string/date/yyyy-MM-dd HH:mm:ss): The maximum period defined for making a payment.
+  - `end_to_end_id`: (string): It is a unique identifier code that every PIX transaction has and is used to verify if the payment was actually made.
+- `fee_info` (object): The transaction fee details.
+  - `total_fee_values` (float): Total calculated fee.
+  - `merchant_amount` (float): Total calculated fee assigned to merchant.
+  - `fee` (array): The transaction fees.
+    - `fee_type` (string): The fee type.
+    - `value` (float): The fee value.
+    - `currency` (string): The fee currency
+- `transaction_history` (array): Array containing transaction history in descending order of timestamp.
+  - `status` (string): Status of the transaction.
+  - `timestamp` (string, yyyy-MM-dd HH:mm:ss): The time at which the transaction changed to this status.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+#### Example Request
+
+<Tabs>
+  <TabItem value="success" label="200 - Success" default>
+    #### Example Request
+      ```jsx title="200 - Success"
+          curl --location 'https://api-sandbox.epag.io/transactionDetails/MY_PAYMENT_TOKEN'
+      ```
+    
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ``` 
+      ```jsx title="Body"
+          {
+            "general_info": {
+              "transaction_status": "PAID",
+              "transaction_id": "8d434f4b-dcc1-4ae2-8a5a-57fc943e625f",
+              "external_id": "dd3e11a3-3227-4a5a-964e-09794dc45bfe",
+              "project_id": "756bfe21-3321-45e5-91a1-db3ff2db8438"
+            },
+            "customer_info": {
+              "customer_id": "Alice Sonnentag",
+              "tax_id": "123******09",
+              "customer_contact": "alice@sonnentag.com",
+              "order_ip": "1.1.1.1",
+              "order_ip_country": "Brazil"
+            },
+            "payment_info": {
+              "order_method": "CREDITCARD",
+              "order_method_country": "Brazil",
+              "card_number": "123456******1234",
+              "card_scheme": "MASTER",
+              "order_amount": 100,
+              "order_currency": "BRL",
+              "payment_amount": 100,
+              "payment_currency": "BRL",
+              "refunded_amount": 0,
+              "error_code": null,
+              "error_description": null,
+              "expiration_date": "2024-01-18 13:26:38",
+              "end_to_end_id": "",
+              "flags": []
+            },
+            "fee_info": {
+              "total_fee_values": 0,
+              "merchant_amount": 1,
+              "fee": [
+                {
+                  "fee_type": "TAXES_FEE",
+                  "value": 0.46,
+                  "currency": "BRL",
+                  "fxInfo": {
+                    "original_currency": "USD",
+                    "counter_currency": "BRL",
+                    "rate": "2",
+                    "rate_timestemp": "2018-06-18"
+                  }
+                },
+                {
+                  "fee_type": "SERVICE_FEE",
+                  "value": 0.45,
+                  "currency": "BRL",
+                  "fxInfo": {
+                    "original_currency": "USD",
+                    "counter_currency": "BRL",
+                    "rate": "2",
+                    "rate_timestemp": "2018-06-18"
+                  }
+                }
+              ]
+            },
+            "other_info": {
+              "dispute_id": ""
+            },
+            "transaction_history": [
+              {
+                "status": "PAID",
+                "timestamp": "2023-02-02 18:47:54"
+              },
+              {
+                "status": "CREATED",
+                "timestamp": "2023-02-02 18:42:11"
+              }
+            ]
+          }
+      ```      
+  </TabItem>
+</Tabs>
