@@ -1,0 +1,95 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Delete a Credit Card
+
+```jsx
+  https://api-sandbox.epag.io/token/card/PUBLIC_CARD_ID
+```
+
+Deletes an existing credit card.
+
+## Request Fields
+
+None.
+
+## Response Fields
+
+- `refresh_token` (string): Updated access token for next calls.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+### Example Request
+
+<Tabs>
+  <TabItem value="success" label="200 - Success">
+    #### Example Request
+      ```jsx title="200 - Success"
+          curl --location --request DELETE 'https://api-sandbox.epag.io/token/card/MY_PUBLIC_CARD_ID' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+  <TabItem value="unauthorized" label="401 - Unauthorized">
+    #### Example Request
+      ```jsx title="401 - Unauthorized"
+          curl --location --request DELETE 'https://api-sandbox.epag.io/token/card/PUBLIC_CARD_ID' \
+          --header 'X-Auth-Token: INVALID_ACCESS_TOKEN'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-01-16T19:52:18.186+0000",
+            "status": 401,
+            "error": "Unauthorized",
+            "message": "Access Denied",
+            "path": "/token/card/PUBLIC_CARD_ID"
+          }
+      ```
+  </TabItem>
+  <TabItem value="not-found" label="404 - Not Found">
+    #### Example Request
+      ```jsx title="404 - Not Found"
+          curl --location --request DELETE 'https://api-sandbox.epag.io/token/card/INVALID_PUBLIC_CARD_ID' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-05-14T17:48:28.928+00:00",
+            "status": 404,
+            "error": "Not Found",
+            "message": "We can't find the card you are trying to use. Please verify and try again.",
+            "path": "/token/card/INVALID_PUBLIC_CARD_ID",
+            "errors": [
+              {
+                "code": "00.01.0034",
+                "description": "We can't find the card you are trying to use. Please verify and try again."
+              }
+            ],
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+</Tabs>
+

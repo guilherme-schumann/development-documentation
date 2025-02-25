@@ -2,3 +2,466 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Simple Boleto
+
+```jsx
+  https://api-sandbox.epag.io/boleto/simple
+```
+
+## Request Body
+
+- `contract_id` (required/string): Merchant's contract id.
+- `reference_id` (required/string/max 45 chars): External code created by the merchant to reference this payment (e.g. order number). Pattern is free and is used in reports and callbacks.
+- `notification_url` (required/string): URL to post callbacks to this payment.
+- `ip_address` (optional/string): Remote IP Address(IPv4/IPv6).
+- `payment` (required/object): The payment data:
+  - `amount` (required/float): Total amount of the payment. Value must have a maximum of two decimal places. Min: `BRL 0.20`
+  - `asset` (required/string): Reference code for asset for the sale's amount.
+  - `soft_descriptor` (string): Description to be printed in the invoice.
+  - `currency` (required/string): Currency code in ISO-4217.
+  - `country` (required/string): Country code in ISO 3166-2.
+  - `boleto` (optional/object): The boleto data:
+    - `expiration_date` (optional/date/YYYY-MM-DD): Expiration date (if not informed system will assume 5 days of current date).
+    - `line1` (optional/string): First line string to introduce as instructions to cashier and final client.
+    - `line2` (optional/string): Second line string to introduce as instructions to cashier and final client.
+    - `line3` (optional/string): Third line string to introduce as instructions to cashier and final client.
+    - `logo` (optional/string): The HTTP/Data URL of your logo (must be JPG or PNG format and it is recommended to be proportional to 200 x 45 pixels). If omitted, the bank logo will be used.
+- `person` (required/object): The person data:
+  - `full_name` (required/string): Person’s full name.
+  - `email` (required/string): Person’s email provided to the merchant.
+  - `tax_id` (required/string): Unique identifier for this person in country tax system (e.g. in Brazil: CPF).
+  - `birth_date` (optional/date/YYYY-MM-DD): Person’s date of birth.
+- `address` (optional/object): The person's address data:
+  - `main` (optional/string): Main information of the address (e.g. street or Avenue).
+  - `number` (optional/string): Number for the address.
+  - `additional` (optional/string): Additional information for this address (e.g. department).
+  - `locality` (optional/string): Billing address locality (e.g. neighborhood).
+  - `city` (optional/string): Billing address city.
+  - `state` (optional/string): Billing address state code.
+  - `country` (optional/string): Billing address country code.
+  - `zip_code` (optional/string): Billing address zip code.
+- `extra_data` (optional/JSON): Any data pertinent to the merchant.
+
+### Response Body (JSON Schema)
+
+```jsx title="json"
+{
+    "type": "object",
+    "properties": {
+        "transaction_status": {"type": "string"},
+        "payment_token": {"type": "string"},
+        "reference_id": {"type": "string"},
+        "boleto_html": {"type": "string"},
+        "boleto_code": {"type": "string"},
+        "boleto_duedate": {"type": "string", "format": "date"},
+        "boleto_amount": {"type": "string"},
+        "refresh_token": {"type": "string"},
+        "totals": {
+            "type": "object",
+            "properties": {
+                "amount": {"type": "number"},
+                "original_amount": {"type": "number"},
+                "original_asset": {"type": "string"},
+                "customer_fees": {"type": "number"},
+                "customer_amount": {"type": "number"},
+                "asset": {"type": "string"}
+            }
+        },
+        "customer_fees": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "number"
+            }
+        }
+    }
+}
+```
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+### Body Raw(json)
+
+```jsx title="json"
+{
+    "contract_id": "MY_CONTRACT_ID",
+    "reference_id": "MY_REFERENCE_ID",
+    "notification_url": "https://my.notification.url/callback/",
+    "ip_address": "0.0.0.0",
+    "payment": {
+        "amount": 123.45,
+        "asset": "BRL",
+        "soft_descriptor": "SOFT_DESCRIPTOR",
+        "currency": "BRL",
+        "country": "BR",
+        "boleto": {
+            "expiration_date": "2024-12-31",
+            "line1": "NÃO RECEBER APÓS VENCIMENTO",
+            "line2": "PAGÁVEL EM TODA A REDE BANCÁRIA ATÉ O VENCIMENTO",
+            "line3": "PAGADOR: CPF 123.456.789-09",
+            "logo": "data:image/png;base64,BASE64_ENCODED_IMAGE"
+        }
+    },
+    "person": {
+        "full_name": "Alice Sonnentag",
+        "email": "alice@sonnentag.com",
+        "tax_id": "39784045087",
+        "birth_date": "1978-08-21"
+    },
+    "address": {
+        "main": "Rua Araguari",
+        "number": "817",
+        "additional": "Apto 54",
+        "locality": "Vila Sônia",
+        "city": "São Paulo",
+        "state": "SP",
+        "country": "BR",
+        "zip_code": "04514-041"
+    },
+    "extra_data": {
+        "my-conciliation-number": "xxxxxx"
+    }
+}
+```
+
+### Example Request
+
+<Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/boleto/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "BRL",
+                    "soft_descriptor": "SOFT_DESCRIPTOR",
+                    "currency": "BRL",
+                    "country": "BR",
+                    "boleto": {
+                        "expiration_date": "2024-12-31",
+                        "line1": "NÃO RECEBER APÓS VENCIMENTO",
+                        "line2": "PAGÁVEL EM TODA A REDE BANCÁRIA ATÉ O VENCIMENTO",
+                        "line3": "PAGADOR: CPF 123.456.789-09",
+                        "logo": "data:image/png;base64,BASE64_ENCODED_IMAGE"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com",
+                    "tax_id": "39784045087",
+                    "birth_date": "1978-08-21"
+                },
+                "address": {
+                    "main": "Rua Araguari",
+                    "number": "817",
+                    "additional": "Apto 54",
+                    "locality": "Vila Sônia",
+                    "city": "São Paulo",
+                    "state": "SP",
+                    "country": "BR",
+                    "zip_code": "04514-041"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "63baae70-f0e5-49c0-96f1-a9f510cd175b",
+              "reference_id": "MY_REFERENCE_ID",
+              "boleto_html": "BASE64_ZIPPED_HTML",
+              "boleto_code": "03399853012970000024227020901016278150000015630",
+              "boleto_duedate": "2024-12-31",
+              "boleto_amount": "123.45",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "totals": {
+                "amount": 123.45,
+                "original_amount": 123.45,
+                "original_asset": "BRL",
+                "customer_fees": 0,
+                "customer_amount": 123.45,
+                "asset": "BRL"
+              },
+              "customer_fees": {}
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/boleto/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "BRL",
+                    "soft_descriptor": "SOFT_DESCRIPTOR",
+                    "currency": "BRL",
+                    "country": "BR",
+                    "boleto": {
+                        "expiration_date": "2024-12-31",
+                        "line1": "NÃO RECEBER APÓS VENCIMENTO",
+                        "line2": "PAGÁVEL EM TODA A REDE BANCÁRIA ATÉ O VENCIMENTO",
+                        "line3": "PAGADOR: CPF 123.456.789-09"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com",
+                    "tax_id": "039784045087",
+                    "birth_date": "1978-08-21"
+                },
+                "address": {
+                    "main": "Rua Araguari",
+                    "number": "817",
+                    "additional": "Apto 54",
+                    "locality": "Vila Sônia",
+                    "city": "São Paulo",
+                    "state": "SP",
+                    "country": "BR",
+                    "zip_code": "04514-041"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:54:57.880+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "person.tax_id: invalid tax ID number",
+              "path": "/boleto/simple",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "person.tax_id: invalid tax ID number"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/boleto/simple' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "BRL",
+                    "soft_descriptor": "SOFT_DESCRIPTOR",
+                    "currency": "BRL",
+                    "country": "BR",
+                    "boleto": {
+                        "expiration_date": "2024-12-31",
+                        "line1": "NÃO RECEBER APÓS VENCIMENTO",
+                        "line2": "PAGÁVEL EM TODA A REDE BANCÁRIA ATÉ O VENCIMENTO",
+                        "line3": "PAGADOR: CPF 123.456.789-09"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com",
+                    "tax_id": "39784045087",
+                    "birth_date": "1978-08-21"
+                },
+                "address": {
+                    "main": "Rua Araguari",
+                    "number": "817",
+                    "additional": "Apto 54",
+                    "locality": "Vila Sônia",
+                    "city": "São Paulo",
+                    "state": "SP",
+                    "country": "BR",
+                    "zip_code": "04514-041"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/boleto/simple"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/boleto/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "BRL",
+                    "soft_descriptor": "SOFT_DESCRIPTOR",
+                    "currency": "BRL",
+                    "country": "BR",
+                    "boleto": {
+                        "expiration_date": "2024-12-31",
+                        "line1": "NÃO RECEBER APÓS VENCIMENTO",
+                        "line2": "PAGÁVEL EM TODA A REDE BANCÁRIA ATÉ O VENCIMENTO",
+                        "line3": "PAGADOR: CPF 123.456.789-09"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com",
+                    "tax_id": "39784045087",
+                    "birth_date": "1978-08-21"
+                },
+                "address": {
+                    "main": "Rua Araguari",
+                    "number": "817",
+                    "additional": "Apto 54",
+                    "locality": "Vila Sônia",
+                    "city": "São Paulo",
+                    "state": "SP",
+                    "country": "BR",
+                    "zip_code": "04514-041"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:50:25.715+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "Invalid contract / project",
+              "path": "/boleto/simple",
+              "errors": [
+                {
+                  "code": "00.01.0021",
+                  "description": "Invalid contract / project"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/boleto/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "BRL",
+                    "soft_descriptor": "SOFT_DESCRIPTOR",
+                    "currency": "BRL",
+                    "country": "BR",
+                    "boleto": {
+                        "expiration_date": "2024-12-31",
+                        "line1": "NÃO RECEBER APÓS VENCIMENTO",
+                        "line2": "PAGÁVEL EM TODA A REDE BANCÁRIA ATÉ O VENCIMENTO",
+                        "line3": "PAGADOR: CPF 123.456.789-09"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com",
+                    "tax_id": "39784045087",
+                    "birth_date": "1978-08-21"
+                },
+                "address": {
+                    "main": "Rua Araguari",
+                    "number": "817",
+                    "additional": "Apto 54",
+                    "locality": "Vila Sônia",
+                    "city": "São Paulo",
+                    "state": "SP",
+                    "country": "BR",
+                    "zip_code": "04514-041"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/boleto/simple",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>
+

@@ -1,17 +1,17 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Cancel Pre Auth Checkout Payment
+# Cancel Pre-Auth Token Payment
 
 ```jsx
-https://api-sandbox.epag.io/checkout/MY_PAYMENT_TOKEN/cancel
+  https://api-sandbox.epag.io/token/MY_PAYMENT_TOKEN/cancel
 ```
 
-Cancels a pre-authorized payment that were already sent using the `Process Checkout Payment` method.
+Cancels a pre-authorized payment that were already sent using the `Process Token Payment` method.
 
 ## Request Fields
 
-none
+None.
 
 ## Response Fields
 
@@ -30,7 +30,7 @@ none
   <TabItem value="success" label="200 - Success">
     #### Example Request
       ```jsx title="200 - Success"
-          curl --location --request POST 'https://api-sandbox.epag.io/checkout/MY_PAYMENT_TOKEN/cancel' \
+          curl --location --request DELETE 'https://api-sandbox.epag.io/token/MY_PAYMENT_TOKEN/cancel' \
           --header 'X-Auth-Token: MY_ACCESS_TOKEN'
       ```
 
@@ -49,7 +49,7 @@ none
   <TabItem value="unauthorized" label="401 - Unauthorized">
     #### Example Request
       ```jsx title="401 - Unauthorized"
-          curl --location --request POST 'https://api-sandbox.epag.io/checkout/MY_PAYMENT_TOKEN/cancel' \
+          curl --location --request POST 'https://api-sandbox.epag.io/token/MY_PAYMENT_TOKEN/cancel' \
           --header 'X-Auth-Token: INVALID_ACCESS_TOKEN'
       ```
 
@@ -63,14 +63,14 @@ none
             "status": 401,
             "error": "Unauthorized",
             "message": "Access Denied",
-            "path": "/checkout/633de157-9a42-4d30-bbad-bd9fb883e058/cancel"
+            "path": "/token/633de157-9a42-4d30-bbad-bd9fb883e058/cancel"
           }
       ```
   </TabItem>
   <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
     #### Example Request
       ```jsx title="422 - Unprocessable Entity"
-          curl --location --request POST 'https://api-sandbox.epag.io/checkout/MY_PAYMENT_TOKEN/cancel' \
+          curl --location --request POST 'https://api-sandbox.epag.io/token/MY_PAYMENT_TOKEN/cancel' \
           --header 'X-Auth-Token: MY_ACCESS_TOKEN'
       ```
 
@@ -84,7 +84,7 @@ none
             "status": 422,
             "error": "Unprocessable Entity",
             "message": "The payment token was not pre-authorized, so it can't be captured.",
-            "path": "/checkout/633de157-9a42-4d30-bbad-bd9fb883e058/cancel",
+            "path": "/token/633de157-9a42-4d30-bbad-bd9fb883e058/cancel",
             "errors": [
               {
                 "code": "00.04.0010",
@@ -98,7 +98,7 @@ none
   <TabItem value="bad-gateway" label="502 - Bad Gateway">
     #### Example Request
       ```jsx title="502 - Bad Gateway"
-          curl --location --request POST 'https://api-sandbox.epag.io/checkout/MY_PAYMENT_TOKEN/cancel' \
+          curl --location --request POST 'https://api-sandbox.epag.io/token/MY_PAYMENT_TOKEN/cancel' \
           --header 'X-Auth-Token: MY_ACCESS_TOKEN'
       ```
 
@@ -112,7 +112,7 @@ none
             "status": 502,
             "error": "Bad Gateway",
             "message": "There was an issue when contacting an external API, please contact support",
-            "path": "/checkout/2f1c0103-b6fe-4e99-864c-d20c68b97a85/cancel",
+            "path": "/token/2f1c0103-b6fe-4e99-864c-d20c68b97a85/cancel",
             "errors": [
               {
                 "code": "00.03.0001",
@@ -124,3 +124,4 @@ none
       ```
   </TabItem>
 </Tabs>
+

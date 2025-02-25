@@ -2,3 +2,316 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Simple SPEI
+
+```jsx
+  https://api-sandbox.epag.io/spei/simple
+```
+
+## Request Fields
+- `contract_id` (required/string): Merchant's contract id.
+- `payment` (required/object): The payment data:
+  - `amount` (float/required): Total amount of the payment. Value must have a maximum of two decimal places.
+  - `asset` (optional/string): Reference code for asset for the sale's amount. Default: `MXN`.
+  - `currency` (required/string): Currency code in ISO-4217.
+  - `country` (required/string): Country code in ISO 3166-2.
+  - `spei` (optional/object): The SPEI payment data:
+
+description: (optional/string): This is a message that goes attached to the transaction and will show at the recipient's bank statement.
+
+logo (optional/string): The HTTP/Data URL of your logo (must be JPG or PNG format and it is recommended to be proportional to 200 x 45 pixels). If omitted, no logo will be displayed.
+- `person` (required/object): The person data:
+  - `full_name` (required/string): Person’s full name.
+  - `email` (required/string): Person’s email provided to the merchant.
+- `notification_url` (required/required): URL to post callbacks to this payment.
+- `reference_id` (required/required/max 45 chars): External code created by the merchant to reference this payment (e.g. order number). Pattern is free and is used in reports and callbacks.
+- `extra_data` (optional/JSON): Any data pertinent to the merchant.
+- `ip_address` (optional/string): Remote IP Address(IPv4/IPv6).
+
+## Response Fields
+
+
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+### Body Raw(json)
+
+```jsx title="json"
+{
+    "contract_id": "MY_CONTRACT_ID",
+    "reference_id": "MY_REFERENCE_ID",
+    "notification_url": "https://my.notification.url/callback/",
+    "ip_address": "0.0.0.0",
+    "payment": {
+        "amount": 123.45,
+        "asset": "MXN",
+        "currency": "MXN",
+        "country": "MX",
+        "spei": {
+            "description": "Payment via SPEI",
+            "logo": "data:image/png;base64,BASE64_ENCODED_IMAGE"
+        }
+    },
+    "person": {
+        "full_name": "Alice Sonnentag",
+        "email": "alice@sonnentag.com"
+    },
+    "extra_data": {
+        "my-conciliation-number": "xxxxxx"
+    }
+}
+```
+
+### Example Request
+
+<Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/paynet/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "MXN",
+                    "currency": "MXN",
+                    "country": "MX",
+                    "paynet": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via PAYNET",
+                        "logo": "data:image/png;base64,BASE64_ENCODED_IMAGE"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "0196e128-c6c7-4249-9f20-21a4c2eb1506",
+              "reference_id": "MY_REFERENCE_ID",
+              "barcode_png_gzip_base_64": "BASE64_ZIPPED_PNG",
+              "pdf_gzip_base_64": "BASE64_ZIPPED_PDF",
+              "barcode": "64000012578123060900025032",
+              "amount": "123.45",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "totals": {
+                "amount": 123.45,
+                "original_amount": 123.45,
+                "original_asset": "MXN",
+                "customer_fees": 0,
+                "customer_amount": 123.45,
+                "asset": "MXN"
+              },
+              "customer_fees": {}
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/paynet/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-17T15:24:38.899+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "payment: must not be null",
+              "path": "/paynet/simple",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "payment: must not be null"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/paynet/simple' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "MXN",
+                    "currency": "MXN",
+                    "country": "MX",
+                    "paynet": {
+                        "description": "Payment via PAYNET"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/paynet/simple"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/paynet/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "MXN",
+                    "currency": "MXN",
+                    "country": "MX",
+                    "paynet": {
+                        "description": "Payment via PAYNET"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:50:25.715+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "Invalid contract / project",
+              "path": "/paynet/simple",
+              "errors": [
+                {
+                  "code": "00.01.0021",
+                  "description": "Invalid contract / project"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/paynet/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "MXN",
+                    "currency": "MXN",
+                    "country": "MX",
+                    "paynet": {
+                        "description": "Payment via PAYNET"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/paynet/simple",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>

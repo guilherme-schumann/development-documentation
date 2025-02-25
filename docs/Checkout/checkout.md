@@ -1,8 +1,3 @@
----
-displayed_sidebar: checkoutSidebar
-sidebar_position: 1
----
-
 # Checkout
 
 Our Checkout-as-a-Service offers a JavaScript solution that seamlessly integrates into your environment as an embedded payment form.

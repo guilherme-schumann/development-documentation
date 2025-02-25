@@ -285,6 +285,25 @@ const sidebars: SidebarsConfig = {
             },
           ],
         },
+        {
+          type: 'category',
+          label: 'Token Payment',
+          items: [
+            {
+              type: 'category',
+              label: 'Brazil',
+              items: [
+                'Payments/Token Payment/Brazil/create-a-person-credit-card',
+                'Payments/Token Payment/Brazil/process-token-payments',
+                'Payments/Token Payment/Brazil/capture-pre-auth-token-payment',
+                'Payments/Token Payment/Brazil/cancel-pre-auth-token-payment',
+                'Payments/Token Payment/Brazil/delete-a-credit-card',
+                'Payments/Token Payment/Brazil/delete-a-person',
+                'Payments/Token Payment/Brazil/get-card-status',
+              ],
+            },
+          ],
+        },
       ]
     },
     {

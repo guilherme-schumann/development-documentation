@@ -1,1 +1,45 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Get Person & Credit Card ID
+
+```jsx
+https://api-sandbox.epag.io/checkout/MY_PAYMENT_TOKEN
+```
+
+Retrieve the Person and Credit Card tokenized IDs for processing. Call this method after finish the [Checkout Flow](checkout.md) using `processPayment` = `false`.
+
+## Path Variables
+
+- `paymentToken` (required/string): The payment token returned by CheckoutJS library.
+
+## Response Fields
+
+- `public_person_id` (string): Unique Person identification.
+- `public_card_id` (string): Unique credit card identification.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+<Tabs>
+  <TabItem value="ok" label="200 - OK">
+    #### Example Request
+      ```jsx title="200 - OK"
+          curl --location 'https://api-sandbox.epag.io/checkout/MY_PAYMENT_TOKEN' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "public_person_id": "PER-00000000-0000-0000-0000-000000000000",
+            "public_card_id": "CAR-00000000-0000-0000-0000-000000000000"
+          }
+      ```
+  </TabItem>
+</Tabs>

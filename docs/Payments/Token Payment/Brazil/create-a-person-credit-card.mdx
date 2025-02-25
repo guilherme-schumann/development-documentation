@@ -1,0 +1,272 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Create a Person & Credit Card
+
+```jsx
+  https://api-sandbox.epag.io/token/person
+```
+
+Create a Person and a Credit Card.
+
+## Request Fields
+
+- `contract_id` (required/string): Merchant's contract id.
+- `person_firstname` (required/string): First name of this person.
+- `person_surname` (required/string): Surname of this person.
+- `person_taxid` (required/string): Unique identifier for this person in the country tax system (e.g. in Brazil: CPF).
+- `person_email` (required/string): Person’s email provided to the merchant.
+- `person_birth` (required/date/YYYY-MM-DD): Date of birth.
+- `address_main` (required*/string): Main information of the address (e.g. street or Avenue).
+- `address_number` (required*/string): Number for this address.
+- `address_additional` (optional/string): Additional information for this address (e.g. department).
+- `address_locality` (required*/string): Billing address locality (e.g. neighborhood).
+- `address_city` (required*/string): Billing address city.
+- `address_state` (required*/string): Billing address state code.
+- `address_country` (required*/string): Country code as ISO 3166-1 alpha-2 code.
+- `address_zipcode` (required*/string): Billing address zip code.
+- `address_phone_area` (optional/string): Number of phone area code.
+- `address_phone_country` (optional/string): Number of country phone code.
+- `address_phone` (optional/string): Billing address telephone.
+- `disable_address` (optional/boolean): true to turn off required address fields. Default: `false`.
+- `card_number` (required/string): Credit Card number (only numbers).
+- `card_holder` (required/string): Name of card owner as printed on the card.
+- `card_cvv` (required/string): Security code of the card.
+- `card_year` (required/int): Expiration year of the card (with century, e.g. 2023).
+- `card_month` (required/int): Expiration month to the card.
+
+## Response Fields
+
+- `refresh_token` (string): Updated access token for next calls.
+- `public_person_id` (string): Unique Person identification for future actions.
+- `public_card_id` (string): Unique Credit Card identification for future actions.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+### Body Raw(json)
+
+```jsx title="json"
+{
+    "contract_id": "MY_CONTRACT_ID",
+    "person_firstname": "Alice",
+    "person_surname": "Sonnentag",
+    "person_birth": "1978-08-21",
+    "person_email": "alice@sonnentag.com",
+    "person_taxid": "39784045087",
+    "address_city": "São Paulo",
+    "address_country": "BR",
+    "address_locality": "Vila Sônia",
+    "address_main": "Rua Araguari",
+    "address_number": "817",
+    "address_additional": "Conj. 74",
+    "address_state": "SP",
+    "address_zipcode": "04514-041",
+    "address_phone_country": 55,
+    "address_phone_area": 11,
+    "address_phone": "23716520",
+    "disable_address": false,
+    "card_number": "5240082975622454",
+    "card_holder": "Alice Sonnentag",
+    "card_month": 12,
+    "card_year": 2026,
+    "card_cvv": "123"
+}
+```
+
+### Example Request
+
+<Tabs>
+  <TabItem value="success" label="200 - Success">
+    #### Example Request
+      ```jsx title="200 - Success"
+          curl --location 'https://api-sandbox.epag.io/checkout/sendPayment' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "contract_id": "MY_CONTRACT_ID",
+              "reference_id": "MY_REFERENCE_ID",
+              "notification_url": "https://my.notification.url/callback/",
+              "public_person_id": "MY_PUBLIC_PERSON_ID",
+              "public_card_id": "MY_PUBLIC_CARD_ID",
+              "payment": {
+                  "method": "CREDITCARD",
+                  "amount": 123.45,
+                  "asset": "BRL",
+                  "installments": "1",
+                  "soft_descriptor": "SOFT_DESCRIPTOR"
+              },
+              "ip_address": "0.0.0.0",
+              "extra_data": {
+                  "my-conciliation-number": "xxxxxx"
+              }
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "refresh_token": "MY_ACCESS_TOKEN",
+            "public_person_id": "PER-715a6579-e420-4098-b18a-918cc732224d",
+            "public_card_id": "CAR-cbd3dfd8-4e0e-4525-a80b-db361f3189be"
+          }
+      ```
+  </TabItem>
+  <TabItem value="bad-request" label="400 - Bad Request">
+    #### Example Request
+      ```jsx title="400 - Bad Request"
+          curl --location 'https://api-sandbox.epag.io/token/person' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data-raw '{
+              "contract_id": "MY_CONTRACT_ID",
+              "person_firstname": "Alice",
+              "person_surname": "Sonnentag",
+              "person_birth": "1978-08-21",
+              "person_email": "alice@sonnentag.com",
+              "person_taxid": "039784045087",
+              "address_city": "São Paulo",
+              "address_country": "BR",
+              "address_locality": "Vila Sônia",
+              "address_main": "Rua Araguari",
+              "address_number": "817",
+              "address_additional": "Conj. 74",
+              "address_state": "SP",
+              "address_zipcode": "04514-041",
+              "address_phone_country": 55,
+              "address_phone_area": 11,
+              "address_phone": "23716520",
+              "disable_address": false,
+              "card_number": "5239032934640116",
+              "card_holder": "Alice Sonnentag",
+              "card_month": 11,
+              "card_year": 2025,
+              "card_cvv": "029"
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-01-17T20:44:53.999+0000",
+            "status": 400,
+            "error": "Bad Request",
+            "message": "person_taxid: invalid tax ID number",
+            "path": "/token/person",
+            "errors": [
+              {
+                "code": "00.01.0044",
+                "description": "person_taxid: invalid tax ID number"
+              }
+            ],
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+  <TabItem value="unauthorized" label="401 - Unauthorized">
+    #### Example Request
+      ```jsx title="401 - Unauthorized"
+          curl --location 'https://api-sandbox.epag.io/token/person' \
+          --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+          --data-raw '{
+              "contract_id": "MY_CONTRACT_ID",
+              "person_firstname": "Alice",
+              "person_surname": "Sonnentag",
+              "person_birth": "1978-08-21",
+              "person_email": "alice@sonnentag.com",
+              "person_taxid": "39784045087",
+              "address_city": "São Paulo",
+              "address_country": "BR",
+              "address_locality": "Vila Sônia",
+              "address_main": "Rua Araguari",
+              "address_number": "817",
+              "address_additional": "Conj. 74",
+              "address_state": "SP",
+              "address_zipcode": "04514-041",
+              "address_phone_country": 55,
+              "address_phone_area": 11,
+              "address_phone": "23716520",
+              "disable_address": false,
+              "card_number": "5239032934640116",
+              "card_holder": "Alice Sonnentag",
+              "card_month": 11,
+              "card_year": 2025,
+              "card_cvv": "029"
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-01-16T15:35:10.131+0000",
+            "status": 401,
+            "error": "Unauthorized",
+            "message": "Access Denied",
+            "path": "/token/person"
+          }
+      ```
+  </TabItem>
+  <TabItem value="bad-gateway" label="502 - Bad Gateway">
+    #### Example Request
+      ```jsx title="502 - Bad Gateway"
+          curl --location 'https://api-sandbox.epag.io/token/person' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data-raw '{
+              "contract_id": "MY_CONTRACT_ID",
+              "person_firstname": "Alice",
+              "person_surname": "Sonnentag",
+              "person_birth": "1978-08-21",
+              "person_email": "alice@sonnentag.com",
+              "person_taxid": "39784045087",
+              "address_city": "São Paulo",
+              "address_country": "BR",
+              "address_locality": "Vila Sônia",
+              "address_main": "Rua Araguari",
+              "address_number": "817",
+              "address_additional": "Conj. 74",
+              "address_state": "SP",
+              "address_zipcode": "04514-041",
+              "address_phone_country": 55,
+              "address_phone_area": 11,
+              "address_phone": "23716520",
+              "disable_address": false,
+              "card_number": "5239032934640116",
+              "card_holder": "Alice Sonnentag",
+              "card_month": 11,
+              "card_year": 2025,
+              "card_cvv": "029"
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-01-16T20:12:28.156+0000",
+            "status": 502,
+            "error": "Bad Gateway",
+            "message": "There was an issue when contacting an external API, please contact support",
+            "path": "/token/person",
+            "errors": [
+              {
+                "code": "00.03.0001",
+                "description": "There was an issue when contacting an external API, please contact support"
+              }
+            ],
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+</Tabs>
+
