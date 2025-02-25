@@ -14,7 +14,10 @@ const config: Config = {
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
-
+  markdown: {
+    mermaid: true, // Able Mermaid to do Diagram in Markdown
+  },
+  themes: ['@docusaurus/theme-mermaid'], // Adiciona o tema Mermaid
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'epag', // Usually your GitHub org/user name.
@@ -66,28 +69,6 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-//     navbar: {
-//       links: [
-//         {
-//           label: 'Community',
-//           position: 'left', // or 'right'
-//           items: [
-//             {
-//               label: 'Facebook',
-//               href: '...',
-//             },
-//             {
-//               label: 'GitHub',
-//               href: '...',
-//             },
-//             // ... more items
-//           ],
-//         },
-//       ],
-//     },
-//     ...
-//   },
-// }
       logo: {
         alt: 'epag Docs - Logo',
         src: 'img/Image - epag - Docs.svg',
@@ -185,6 +166,7 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+      
     },
   } satisfies Preset.ThemeConfig,
 };

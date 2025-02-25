@@ -30,7 +30,58 @@ sidebar_position: 3
 
 The following diagram covers the possible status flow for all our transactions. For every status change a webhook notification is sent to the merchant's API.
 
-![Transaction Status Map](./img/transaction-status-map.png)
+<!-- ![Transaction Status Map](./img/transaction-status-map.png) -->
+
+```mermaid
+    graph TD;
+    %% Define the main starting point
+    CREATED --> PRE_AUTHORIZED;
+    CREATED --> PROCESSING;
+    CREATED --> CANCELED;
+
+    %% Processing Paths
+    PROCESSING --> PAID;
+    PROCESSING --> DECLINED_OR_ERROR;
+    PROCESSING --> IN_ANALYSIS;
+    PROCESSING --> CANCELED;
+
+    %% Analysis Path
+    IN_ANALYSIS --> PROCESSING;
+    IN_ANALYSIS --> DECLINED_OR_ERROR;
+
+    %% Post-Payment Paths
+    PAID --> PARTIALLY_REFUNDED;
+    PAID --> DISPUTE;
+    
+    %% Refund Paths
+    PARTIALLY_REFUNDED --> REFUNDED;
+    REFUNDED --> |When we received a dispute notification after the transaction was refunded| POST_REFUND_DISPUTE;
+    
+    %% Dispute Paths
+    DISPUTE --> DISPUTE_FINAL;
+    DISPUTE --> DISPUTE_REFUNDED;
+    DISPUTE --> DISPUTE_RECOVERED;
+    
+    %% Post-Refund Dispute
+    POST_REFUND_DISPUTE -.-> DISPUTE;
+
+    %% Styling
+    style CREATED fill:#54CC14, color:#fff, stroke:#000,stroke-width:0px,font-weight:600;
+    style PROCESSING fill:#E7E7E7, color:#333, stroke:#000,stroke-width:0px, font-weight:600;
+    style PRE_AUTHORIZED fill:#E7E7E7, color:#333, stroke:#000,stroke-width:0px, font-weight:600;
+    style CANCELED fill:#d00000, color:#fff, stroke:#000,stroke-width:0px, font-weight:600;
+    style DECLINED_OR_ERROR fill:#d00000, color:#fff, stroke:#000,stroke-width:0px, font-weight:600;
+    style IN_ANALYSIS fill:#E7E7E7, color:#333, stroke:#000,stroke-width:0px, font-weight:600;
+    style PAID fill:#54CC14, color:#fff, stroke:#000,stroke-width:0px, font-weight:600;
+    style PARTIALLY_REFUNDED fill:#E7E7E7, color:#333, stroke:#000,stroke-width:0px, font-weight:600;
+    style REFUNDED fill:#E7E7E7, color:#333, stroke:#000,stroke-width:0px, font-weight:600;
+    style DISPUTE fill:#e85d04, color:#fff, stroke:#000,stroke-width:0px, font-weight:600;
+    style DISPUTE_FINAL fill:#7209b7, color:#fff, stroke:#000,stroke-width:0px, font-weight:600;
+    style DISPUTE_REFUNDED fill:#7209b7, color:#fff, stroke:#000,stroke-width:0px, font-weight:600;
+    style DISPUTE_RECOVERED fill:#4361ee, color:#fff, stroke:#000,stroke-width:0px, font-weight:600;
+    style POST_REFUND_DISPUTE fill:#7209b7, color:#fff, stroke:#000,stroke-width:0px, font-weight:600;
+
+```
 
 ## Status Description
 
