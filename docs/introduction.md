@@ -5,7 +5,7 @@ sidebar_position: 1
 
 # Introduction
 
-### Welcome to **Epag's API** Documentation
+### Welcome to **Letpay's API** Documentation
 
 Our comprehensive developer resources and API documentation are crafted to provide developers with an in-depth understanding of epag's suite of products.
 

@@ -19,7 +19,7 @@ sidebar_position: 3
 10. Epag processes the transaction
 11. Epag updates payment status
 
-## API Macro FLow
+## API Macro Flow
 
 1. Merchant authenticates against API and receives JWT Token
 2. Merchant submits Payment data and receives, API response, Payment Id and initial status

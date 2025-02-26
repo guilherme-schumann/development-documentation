@@ -5,9 +5,9 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'epag Documentation',
-  tagline: 'Check out our guides and examples for integrating epag',
-  favicon: 'img/Favicon-epag.ico',
+  title: 'Letpay Documentation',
+  tagline: 'Check out our guides and examples for integrating Letpay',
+  favicon: 'img/Favicon-icon.ico',
 
   // Set the production url of your site here
   url: 'https://your-docusaurus-site.example.com',
@@ -20,7 +20,7 @@ const config: Config = {
   themes: ['@docusaurus/theme-mermaid'], // Adiciona o tema Mermaid
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'epag', // Usually your GitHub org/user name.
+  organizationName: 'Letpay', // Usually your GitHub org/user name.
   projectName: 'Documentation', // Usually your repo name.
 
   onBrokenLinks: 'throw',
@@ -70,9 +70,9 @@ const config: Config = {
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
       logo: {
-        alt: 'epag Docs - Logo',
-        src: 'img/Image - epag - Docs.svg',
-        srcDark: 'img/Image - epag - Docs-dark.svg',
+        alt: 'Letpay Docs - Logo',
+        src: 'img/Image - letpay - Docs.svg',
+        srcDark: 'img/Image - letpay - Docs-dark.svg',
       },
       items: [
         {
@@ -88,7 +88,7 @@ const config: Config = {
           label: "Checkout",
         },
         {
-          to: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
+          to: "https://documenter.getpostman.com/view/27205548/2sA3JQ4eeP",
           label: "API References",
           position: "left",
         },
@@ -101,9 +101,9 @@ const config: Config = {
     },
     footer: {
       logo: {
-        alt: "epag Docs - Logo",
-        src: "img/Image - epag - Docs.svg",
-        srcDark: 'img/Image - epag - Docs-dark.svg',
+        alt: "Letpay Docs - Logo",
+        src: "img/Image - letpay - Docs.svg",
+        srcDark: 'img/Image - letpay - Docs-dark.svg',
       },
       style: "light",
       links: [
@@ -120,7 +120,7 @@ const config: Config = {
             },
             {
               label: "API References",
-              to: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
+              to: "https://documenter.getpostman.com/view/27205548/2sA3JQ4eeP",
             },
             {
               label: "Releases",
@@ -141,7 +141,7 @@ const config: Config = {
           items: [
             {
               label: "Our Website",
-              to: "https://epag.com/",
+              to: "https://letpay.co/",
             },
             {
               label: "Terms & Conditions",
@@ -157,7 +157,7 @@ const config: Config = {
             },
             {
               label: "Prohibited",
-              to: "https://www.epag.com/en/legal/prohibited/",
+              to: "https://letpay.co/legal/prohibited/",
             },
           ],
         },
