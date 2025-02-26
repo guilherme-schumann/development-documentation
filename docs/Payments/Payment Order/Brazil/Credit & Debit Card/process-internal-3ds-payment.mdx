@@ -2,3 +2,94 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Process Internal 3DS Payment
+
+```jsx
+  https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment
+```
+
+Processes a **3DS Credit Card** payment order that were already created via [3DS SDK](/docs/3ds-sdk) or Hosted Checkout.
+
+## Request Fields
+
+- `save_card` (optional/boolean): `true` to tokenize card for future uses. Default: `false`.
+- `authentication` (required/object): The 3DS authentication data:
+  - `id` (required/string): 3DS id number returned by 3DS SDK success event.
+
+## Response Fields
+
+- `payment_token` (string): Token to identify this payment.
+- `refresh_token` (string): Updated access token for next calls.
+- `transaction_status` (string): Status of this payment.
+- `public_person_id` (string): Unique Person identification for future actions. This field is returned only when `save_card` has been sent as `true`.
+
+### Body Raw(json)
+
+```jsx title="json"
+{
+    "authentication": {
+        "id": "3DS_A0B1C2D4-0123-E5F6-G7H8-I9J0K1L2M3N4"
+    },
+    "save_card": false
+}
+```
+
+### Example Request
+
+<Tabs>
+
+  <TabItem value="credit-card" label="200 - Credit Card">
+      #### Example Request
+        ```jsx title="200 - Credit Card"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "method": "CREDITCARD",
+                "card_number": "5240082975622454",
+                "card_holder": "Alice Sonnentag",
+                "card_cvv": "123",
+                "card_year": 2026,
+                "card_month": 12,
+                "card_installments": 1
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "b908d138-c295-45a4-b46f-ca6df80b7f46",
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "authentication": {
+                    "id": "3DS_A0B1C2D4-0123-E5F6-G7H8-I9J0K1L2M3N4"
+                },
+                "save_card": false
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "b908d138-c295-45a4-b46f-ca6df80b7f46",
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>

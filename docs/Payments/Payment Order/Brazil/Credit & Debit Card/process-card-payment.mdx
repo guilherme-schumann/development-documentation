@@ -131,9 +131,151 @@ Bogus credit card data for testing pourposes
       #### Example Request
         ```jsx title="200 - Credit Card With Pre-Auth"
             curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "method": "CREDITCARD",
+                "card_number": "5240082975622454",
+                "card_holder": "Alice Sonnentag",
+                "card_cvv": "123",
+                "card_year": 2026,
+                "card_month": 12,
+                "card_installments": 1,
+                "delay_capture": true
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "b908d138-c295-45a4-b46f-ca6df80b7f46",
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="credit-card-with-tokenization" label="200 - Credit Card With Tokenization">
+      #### Example Request
+        ```jsx title="200 - Credit Card With Tokenization"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "method": "CREDITCARD",
+                "card_number": "5240082975622454",
+                "card_holder": "Alice Sonnentag",
+                "card_cvv": "123",
+                "card_year": 2026,
+                "card_month": 12,
+                "card_installments": 1,
+                "save_card": true
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "b908d138-c295-45a4-b46f-ca6df80b7f46",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "public_person_id": "PER-715a6579-e420-4098-b18a-918cc732224d",
+              "public_card_id": "CAR-cbd3dfd8-4e0e-4525-a80b-db361f3189be"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="debit-card" label="200 - Debit Card">
+      #### Example Request
+        ```jsx title="200 - Debit Card"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "method": "DEBITCARD",
+                "card_number": "5240082975622454",
+                "card_holder": "Alice Sonnentag",
+                "card_cvv": "123",
+                "card_year": 2026,
+                "card_month": 12,
+                "card_installments": 1,
+                "authentication": {
+                    "cavv": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+                    "xid": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+                    "eci": "05",
+                    "version": "2.1.0",
+                    "dstrans_id": "DIR_SERVER_TID"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "b908d138-c295-45a4-b46f-ca6df80b7f46",
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "method": "CREDITCARD",
+                "card_number": "5240082975622454",
+                "card_holder": "Alice Sonnentag",
+                "card_cvv": "123",
+                "card_year": 2022,
+                "card_month": 12,
+                "card_installments": 1
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:32:00.377+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "The credit card year and month must be in the future",
+              "path": "/payment/c6b2ff38-b53d-42dc-b11a-bce5cc05c253/sendPayment",
+              "errors": [
+                {
+                  "code": "00.01.0064",
+                  "description": "The credit card year and month must be in the future"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
             --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
             --data '{
-                "method": "PIX"
+                "method": "CREDITCARD",
+                "card_number": "5240082975622454",
+                "card_holder": "Alice Sonnentag",
+                "card_cvv": "123",
+                "card_year": 2026,
+                "card_month": 12,
+                "card_installments": 1
             }'
         ```
 
@@ -158,7 +300,22 @@ Bogus credit card data for testing pourposes
             curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
             --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
             --data '{
-                "method": "PIX"
+                "method": "CREDITCARD",
+                "card_number": "5240082975622454",
+                "card_holder": "Alice Sonnentag",
+                "card_cvv": "123",
+                "card_year": 2026,
+                "card_month": 12,
+                "card_installments": 1,
+                "delay_capture": false,
+                "save_card": false,
+                "authentication": {
+                    "cavv": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+                    "xid": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+                    "eci": "05",
+                    "version": "2.1.0",
+                    "dstrans_id": "DIR_SERVER_TID"
+                }
             }'
         ```
 
