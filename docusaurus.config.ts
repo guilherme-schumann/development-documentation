@@ -83,6 +83,12 @@ const config: Config = {
         },
         {
           type: "docSidebar",
+          sidebarId: "paymentsSidebar",
+          position: "left",
+          label: "Payments",
+        },
+        {
+          type: "docSidebar",
           sidebarId: "checkoutSidebar",
           position: "left",
           label: "Checkout",

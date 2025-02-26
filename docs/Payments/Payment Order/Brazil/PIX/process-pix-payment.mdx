@@ -1,4 +1,125 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Process PIX Payment
+# Process PIX Payments
+
+```jsx
+  https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment
+```
+
+Processes a **PIX** payment order that were already created using the `Create Payment Order` method.
+
+## Request Fields
+
+- `method` (required/string): Payment method. Valid option: `PIX`.
+
+## Response Fields
+
+- `payment_token` (string): Token to identify this payment.
+- `refresh_token` (string): Updated access token for next calls.
+- `transaction_status` (string): Status of this payment.
+- `pix_amount` (string): Amount of this payment.
+- `pix_qr_code` (string): Base64 zipped PNG image representation of PIX QR code.
+- `pix_code` (string): Text string containing code to pay the PIX.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+### Body Raw(json)
+
+```jsx title="json"
+{
+    "method": "PIX"
+}
+```
+
+### Example Request
+
+<Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "method": "PIX"
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "633de157-9a42-4d30-bbad-bd9fb883e058",
+              "pix_qr_code": "BASE64_ZIPPED_PNG",
+              "pix_code": "00020101021226600016BR.COM.PAGSEGURO01364B08C1DF-AF5D-45F1-9FEE-544AB7226F045204899953039865406123.455802BR5925ELPL Tecnologia em Pagame6009Sao Paulo63044EFC",
+              "pix_amount": "123.45",
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data '{
+                "method": "PIX"
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/payment/c6b2ff38-b53d-42dc-b11a-bce5cc05c253/sendPayment"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "method": "PIX"
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/payment/2f1c0103-b6fe-4e99-864c-d20c68b97a85/sendPayment",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>

@@ -14,7 +14,7 @@ The Reports Module API allows merchants to generate customized reports in CSV fo
 ---
 
 ### Base URL
-<code>http://api.letpay.io/ma/reports-module/</code>
+<code>http://api.epag.io/ma/reports-module/</code>
 
 ## 1. Understanding Reports Module
 

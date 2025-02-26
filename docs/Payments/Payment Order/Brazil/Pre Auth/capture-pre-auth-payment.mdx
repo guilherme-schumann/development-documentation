@@ -1,4 +1,183 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Capture Pre Auth Payment
+# Capture Pre-Auth Payment
+
+```jsx
+  https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/capture
+```
+
+Captures a **pre-authorized** payment that were already sent using one of the following methods: `Process Card Payment`, `Process PicPay Payment`, `Simple PicPay`.
+
+## Request Fields
+
+- `amount` (required/float): Amount of the payment to be captured. Must be less or equal to pre-authorized amount.
+
+## Response Fields
+
+- `payment_token` (string): Token to identify this payment.
+- `refresh_token` (string): Updated access token for next calls.
+- `transaction_status` (string): Status of this payment.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+### Body Raw(json)
+
+```jsx title="json"
+{
+    "amount": 123.45
+}
+```
+
+### Example Request
+
+<Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/capture' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "amount": 123.45
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "8f048623-16c6-47da-aca1-546a16e8fb99",
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/capture' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "amount": 123.456
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T19:57:10.751+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "amount: Value must have a maximum of two decimal places.",
+              "path": "/payment/8f048623-16c6-47da-aca1-546a16e8fb99/capture",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "amount: Value must have a maximum of two decimal places."
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/capture' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data '{
+                "amount": 123.45
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T19:52:18.186+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/payment/633de157-9a42-4d30-bbad-bd9fb883e058/capture"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/capture' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "amount": 123.45
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T19:54:11.447+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "The payment token was not pre-authorized, so it can't be captured.",
+              "path": "/payment/633de157-9a42-4d30-bbad-bd9fb883e058/capture",
+              "errors": [
+                {
+                  "code": "00.04.0010",
+                  "description": "The payment token was not pre-authorized, so it can't be captured."
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/capture' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "amount": 123.45
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/payment/2f1c0103-b6fe-4e99-864c-d20c68b97a85/capture",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>

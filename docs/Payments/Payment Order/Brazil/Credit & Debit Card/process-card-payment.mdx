@@ -2,3 +2,186 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Process Card Payment
+
+```jsx
+  https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment
+```
+
+Processes a **Credit/Debit Card** payment order that were already created using the `Create Payment Order` method.
+
+## Request Fields
+
+- `method` (required/string): Payment Method. Valid options: `CREDITCARD`, `DEBITCARD`.
+- `card_number` (required/string): Credit Card number (only numbers).
+- `card_holder` (required/string): Name of card owner as printed on the card.
+- `card_cvv` (required/string): Security code of the card.
+- `card_year` (required/int): Expiration year of the card (with century, e.g. 2023).
+- `card_month` (required/int): Expiration month to the card.
+- `card_installments` (optional/int): Number of installments. 0 or 1 values are considered as without installments. Default: 1.
+- `delay_capture` (optional/boolean): `true` to pre-authorize payment for later capture. Default: false. Pre-auth cancelation has a TTL of 5 days.
+- `fraud_protection_token`: (optional/string/min 32 chars/max 128 chars): Unique token to identify the payment for fraud protection.
+- `save_card` (optional/boolean): `true` to tokenize card for future uses. Default: `false`.
+
+## Internal 3DS
+
+- `id` 3DS id number returned by 3DS SDK success event.
+
+
+
+## External 3DS / Debit Card Request Fields
+
+- `authentication` (object): The 3DS authentication data:
+- `cavv` (required/string): Card holder Authentication Verification Value.
+- `xid` (required/string): Transaction identifier resulting from authentication processing.
+- `eci` (required/string): Electronic Commerce Indicator.
+- `version` (required/string): 3DS version used for authentication.
+- `dstrans_id` (required/string): Unique transaction identifier assigned by the Directory Server (DS) to identify a single transaction.
+
+:::note
+
+The card data is not stored in any moment nor attached to a person, only transferred to the acquirer. For a new payment for this person, the credit card data has to be submitted again.
+
+:::
+
+## Request Fields
+
+- `payment_token` (string): Token to identify this payment.
+- `refresh_token` (string): Updated access token for next calls.
+- `transaction_status` (string): Status of this payment.
+- `public_person_id` (string): Unique Person identification for future actions. This field is returned only when `save_card` has been sent as `true`.
+
+# Credit Cards for Testing Purposes
+
+Bogus credit card data for testing pourposes
+
+| Brand | Type |	Number | Valid Through | CVV	|
+| -- | -- |	-- | -- | -- |
+| Mastercard | Credit Card |	5240082975622454 | 12/2026 | 123 |
+| Visa | Credit Card |	4539620659922097 | 12/2026 | 123 |
+| Amex | Credit Card |	345817690311361 | 12/2026 | 123 |
+| Hiper | Credit Card |	6062828598919021 | 12/2026 | 123 |
+| Elo | Credit Card |	4514161122113757 | 12/2026 | 123 |
+| Visa | 3DS |	4000000000002503 | 12/2026 | 123 |
+| Mastercard | 3DS |	5200000000001096 | 12/2026 | 123 |
+| Elo | 3DS |	6505050000001091 | 12/2026 | 123 |
+
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+### Body Raw(json)
+
+```jsx title="json"
+{
+    "method": "CREDITCARD",
+    "card_number": "5240082975622454",
+    "card_holder": "Alice Sonnentag",
+    "card_cvv": "123",
+    "card_year": 2026,
+    "card_month": 12,
+    "card_installments": 1,
+    "delay_capture": false,
+    "save_card": false,
+    "authentication": {
+        "cavv": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+        "xid": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+        "eci": "05",
+        "version": "2.1.0",
+        "dstrans_id": "DIR_SERVER_TID"
+    }
+}
+```
+
+### Example Request
+
+<Tabs>
+
+  <TabItem value="credit-card" label="200 - Credit Card">
+      #### Example Request
+        ```jsx title="200 - Credit Card"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "method": "CREDITCARD",
+                "card_number": "5240082975622454",
+                "card_holder": "Alice Sonnentag",
+                "card_cvv": "123",
+                "card_year": 2026,
+                "card_month": 12,
+                "card_installments": 1
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "b908d138-c295-45a4-b46f-ca6df80b7f46",
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="credit-card-with-pre-auth" label="200 - Credit Card With Pre-Auth">
+      #### Example Request
+        ```jsx title="200 - Credit Card With Pre-Auth"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data '{
+                "method": "PIX"
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/payment/c6b2ff38-b53d-42dc-b11a-bce5cc05c253/sendPayment"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "method": "PIX"
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/payment/2f1c0103-b6fe-4e99-864c-d20c68b97a85/sendPayment",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>
