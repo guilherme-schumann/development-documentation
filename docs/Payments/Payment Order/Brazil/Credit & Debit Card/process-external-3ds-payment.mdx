@@ -2,3 +2,129 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Process External 3DS Payment
+
+```jsx
+  https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment
+```
+
+Processes a **3DS Credit/Debit Card** payment order that were already created using the `Create Payment Order` method.
+
+## Request Fields
+
+- `method` (required/string): Payment Method. Valid options: CREDITCARD, DEBITCARD.
+- `card_number` (required/string): Credit Card number (only numbers).
+- `card_holder` (required/string): Name of card owner as printed on the card.
+- `card_cvv` (required/string): Security code of the card.
+- `card_year` (required/int): Expiration year of the card (with century, e.g. 2023).
+- `card_month` (required/int): Expiration month to the card.
+- `card_installments` (optional/int): Number of installments. 0 or 1 values are considered as without installments. Default: 1.
+- `delay_capture` (optional/boolean): true to pre-authorize payment for later capture. Default: false. Pre-auth cancelation has a TTL of 5 days.
+- `fraud_protection_token`: (optional/string/min 32 chars/max 128 chars): Unique token to identify the payment for fraud protection.
+- `save_card` (optional/boolean): true to tokenize card for future uses. Default: false.
+- `authentication` (object): The 3DS authentication data:
+  - `cavv` (required/string): Card holder Authentication Verification Value.
+  - `xid` (required/string): Transaction identifier resulting from authentication processing.
+  - `eci` (required/string): Electronic Commerce Indicator.
+  - `version` (required/string): 3DS version used for authentication.
+  - `dstrans_id` (required/string): Unique transaction identifier assigned by the Directory Server (DS) to identify a single transaction.
+
+:::note
+
+The card data is not stored in any moment nor attached to a person, only transferred to the acquirer. For a new payment for this person, the credit card data has to be submitted again. 
+
+:::
+
+## Response Fields
+
+- `payment_token` (string): Token to identify this payment.
+- `refresh_token` (string): Updated access token for next calls.
+- `transaction_status` (string): Status of this payment.
+- `public_person_id` (string): Unique Person identification for future actions. This field is returned only when `save_card` has been sent as `true`.
+
+
+## Credit Card numbers for testing purposes
+
+Bogus credit card data for testing pourposes
+
+| Brand | Number | Valid Throught | CVV |
+| -- | -- | -- | -- |
+| Visa | 4000000000002503 | 12/2026 | 123 |
+| Mastercard | 5200000000001096 | 12/2026 | 123 |
+| Elo | 	6505050000001091 | 12/2026 | 123 |
+
+### Example Request
+
+<Tabs>
+
+  <TabItem value="success-credit-card" label="200 - Success Credit Card">
+      #### Example Request
+        ```jsx title="200 - Success Credit Card"
+            curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data '{
+                "method": "CREDITCARD",
+                "card_number": "5240082975622454",
+                "card_holder": "Alice Sonnentag",
+                "card_cvv": "123",
+                "card_year": 2026,
+                "card_month": 12,
+                "card_installments": 1,
+                "authentication": {
+                    "cavv": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+                    "xid": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+                    "eci": "05",
+                    "version": "2.1.0",
+                    "dstrans_id": "DIR_SERVER_TID"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "b908d138-c295-45a4-b46f-ca6df80b7f46",
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+  </TabItem>
+
+  <TabItem value="success-debit-card" label="200 - Success Debit Card">
+    #### Example Request
+      ```jsx title="200 - Success Debit Card"
+        curl --location 'https://api-sandbox.epag.io/payment/MY_PAYMENT_TOKEN/sendPayment' \
+        --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+        --data '{
+            "method": "DEBITCARD",
+            "card_number": "5240082975622454",
+            "card_holder": "Alice Sonnentag",
+            "card_cvv": "123",
+            "card_year": 2026,
+            "card_month": 12,
+            "authentication": {
+                "cavv": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+                "xid": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+                "eci": "05",
+                "version": "2.1.0",
+                "dstrans_id": "DIR_SERVER_TID"
+            }
+        }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "transaction_status": "PROCESSING",
+            "payment_token": "b908d138-c295-45a4-b46f-ca6df80b7f46",
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+    
+</Tabs>
