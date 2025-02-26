@@ -15,10 +15,8 @@ import TabItem from '@theme/TabItem';
   - `currency` (required/string): Currency code in ISO-4217.
   - `country` (required/string): Country code in ISO 3166-2.
   - `spei` (optional/object): The SPEI payment data:
-
-description: (optional/string): This is a message that goes attached to the transaction and will show at the recipient's bank statement.
-
-logo (optional/string): The HTTP/Data URL of your logo (must be JPG or PNG format and it is recommended to be proportional to 200 x 45 pixels). If omitted, no logo will be displayed.
+    - `description` (optional/string): This is a message that goes attached to the transaction and will show at the recipient's bank statement.
+    - `logo` (optional/string): The HTTP/Data URL of your logo (must be JPG or PNG format and it is recommended to be proportional to 200 x 45 pixels). If omitted, no logo will be displayed.
 - `person` (required/object): The person data:
   - `full_name` (required/string): Person’s full name.
   - `email` (required/string): Person’s email provided to the merchant.
@@ -37,12 +35,12 @@ logo (optional/string): The HTTP/Data URL of your logo (must be JPG or PNG forma
 - `amount` (string): Amount of this payment.
 - `refresh_token` (string): Updated access token for future calls.
 - `totals` (object): The payment totals:
-- `amount` (float): Amount in default region asset.
-- `asset` (string): Asset used in this amount.
-- `original_amount` (float): Amount as informed by merchant.
-- `original_asset` (string): Asset used in this originalAmount.
-- `customer_fees` (float): Total calculated fee assigned to customer.
-- `customer_amount` (float): Total amount for customer (`amount` + `customer_fees`).
+  - `amount` (float): Amount in default region asset.
+  - `asset` (string): Asset used in this amount.
+  - `original_amount` (float): Amount as informed by merchant.
+  - `original_asset` (string): Asset used in this originalAmount.
+  - `customer_fees` (float): Total calculated fee assigned to customer.
+  - `customer_amount` (float): Total amount for customer (`amount` + `customer_fees`).
 - `customer_fees` (object): List of incident customer fees and respective values.
 
 | AUTHORIZATION | API Key         | 

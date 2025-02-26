@@ -6,7 +6,6 @@ import TabItem from '@theme/TabItem';
 ```jsx
   https://api-sandbox.epag.io/paycash/simple
 ```
-
 ## Paycash
 
 Paycash is an Alternative Payment Method (APM) tailored predominantly for cash transactions, mirroring the operational framework of other APMs within the Latin American region.
@@ -25,13 +24,15 @@ The way Paycash works is quite straightforward:
 
 ## HTTP POST /paycash/simple
 
-#### Description
+
+**Description**
 
 This endpoint is used to initiate a payment transaction using Paycash. The request should include the necessary payment details, person information, and additional data.
 
 **If you already integrated Paycash for another country:**
-- The same integration should work by changing the payment country and payment currency.
-- Each country provides a reference code with a length of 16 characters, with the exception of Mexico, which issues a 13-character.
+  - The same integration should work by changing the payment country and payment currency.
+  - Each country provides a reference code with a length of 16 characters, with the exception of Mexico, which issues a 13-character.
+
 
 ## Request Fields
 
@@ -68,6 +69,7 @@ This endpoint is used to initiate a payment transaction using Paycash. The reque
   - `original_asset` (string): Asset used in this originalAmount.
   - `customer_fees` (float): Total calculated fee assigned to customer.
   - `customer_amount` (float): Total amount for customer (`amount` + `customer_fees`).
+
 - `customer_fees` (object): List of incident customer fees and respective values.
 
 | AUTHORIZATION | API Key         | 
