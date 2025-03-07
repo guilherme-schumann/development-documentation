@@ -79,7 +79,7 @@ const config: Config = {
           type: "docSidebar",
           sidebarId: "docSidebar",
           position: "left",
-          label: "Docs",
+          label: "Overview",
         },
         {
           type: "docSidebar",
@@ -89,9 +89,21 @@ const config: Config = {
         },
         {
           type: "docSidebar",
+          sidebarId: "twostepaymentsSidebar",
+          position: "left",
+          label: "Two Step Payments",
+        },
+        {
+          type: "docSidebar",
           sidebarId: "checkoutSidebar",
           position: "left",
           label: "Checkout",
+        },
+        {
+          type: "docSidebar",
+          sidebarId: "reportsSidebar",
+          position: "left",
+          label: "Reports",
         },
         {
           to: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
@@ -117,7 +129,7 @@ const config: Config = {
           title: "Menu",
           items: [
             {
-              label: "Docs",
+              label: "Overview",
               to: "/docs/introduction",
             },
             {
