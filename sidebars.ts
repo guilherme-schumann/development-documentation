@@ -187,6 +187,10 @@ const sidebars: SidebarsConfig = {
   ],
   twostepaymentsSidebar: [
     'Payment Order/create-payment-order',
+    {
+      type: 'category',
+      label: 'Process Payment Order',
+      items: [
         {
           type: 'category',
           label: 'Brazil',
@@ -329,6 +333,8 @@ const sidebars: SidebarsConfig = {
             'Payment Order/Dominican Republic/process-paycash-payment',
           ],
         },
+      ],
+    },
   ],
   reportsSidebar: [
     'Reports/reports',

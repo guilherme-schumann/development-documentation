@@ -133,8 +133,20 @@ const config: Config = {
               to: "/docs/introduction",
             },
             {
+              label: "Payments",
+              to: "/docs/Payments/Brazil/simple-pix",
+            },
+            {
+              label: "Two Step Payments",
+              to: "/docs/Payment%20Order/create-payment-order",
+            },
+            {
               label: "Checkout",
               to: "/docs/Checkout/",
+            },
+            {
+              label: "Reports",
+              to: "/docs/Reports/",
             },
             {
               label: "API References",
