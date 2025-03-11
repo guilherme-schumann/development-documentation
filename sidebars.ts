@@ -197,16 +197,16 @@ const sidebars: SidebarsConfig = {
           items: [
             {
               type: 'category',
-              label: 'Pre Auth',
-              items: [
-                'Payment Order/Brazil/Pre Auth/capture-pre-auth-payment',
-                'Payment Order/Brazil/Pre Auth/cancel-pre-auth-payment',
-              ],
-            },
-            {
-              type: 'category',
               label: 'Credit & Debit Card',
               items: [
+                {
+                  type: 'category',
+                  label: 'Pre Auth',
+                  items: [
+                    'Payment Order/Brazil/Credit & Debit Card/Pre Auth/capture-pre-auth-payment',
+                    'Payment Order/Brazil/Credit & Debit Card/Pre Auth/cancel-pre-auth-payment',
+                  ],
+                },
                 'Payment Order/Brazil/Credit & Debit Card/process-card-payment',
                 'Payment Order/Brazil/Credit & Debit Card/process-internal-3ds-payment',
                 'Payment Order/Brazil/Credit & Debit Card/process-external-3ds-payment',

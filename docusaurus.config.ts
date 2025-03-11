@@ -99,12 +99,12 @@ const config: Config = {
           position: "left",
           label: "Checkout",
         },
-        {
-          type: "docSidebar",
-          sidebarId: "reportsSidebar",
-          position: "left",
-          label: "Reports",
-        },
+        // {
+        //   type: "docSidebar",
+        //   sidebarId: "reportsSidebar",
+        //   position: "left",
+        //   label: "Reports",
+        // },
         {
           to: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
           label: "API References",
@@ -144,10 +144,10 @@ const config: Config = {
               label: "Checkout",
               to: "/docs/Checkout/",
             },
-            {
-              label: "Reports",
-              to: "/docs/Reports/",
-            },
+            // {
+            //   label: "Reports",
+            //   to: "/docs/Reports/",
+            // },
             {
               label: "API References",
               to: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
