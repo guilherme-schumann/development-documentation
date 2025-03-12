@@ -1,5 +1,5 @@
 ---
-displayed_sidebar: docSidebar
+displayed_sidebar: reportsSidebar
 sidebar_position: 12
 ---
 

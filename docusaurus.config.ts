@@ -79,7 +79,7 @@ const config: Config = {
           type: "docSidebar",
           sidebarId: "docSidebar",
           position: "left",
-          label: "Docs",
+          label: "Overview",
         },
         {
           type: "docSidebar",
@@ -89,10 +89,22 @@ const config: Config = {
         },
         {
           type: "docSidebar",
+          sidebarId: "twostepaymentsSidebar",
+          position: "left",
+          label: "Two Step Payments",
+        },
+        {
+          type: "docSidebar",
           sidebarId: "checkoutSidebar",
           position: "left",
           label: "Checkout",
         },
+        // {
+        //   type: "docSidebar",
+        //   sidebarId: "reportsSidebar",
+        //   position: "left",
+        //   label: "Reports",
+        // },
         {
           to: "https://documenter.getpostman.com/view/27205548/2sA3JQ4eeP",
           label: "API References",
@@ -117,13 +129,25 @@ const config: Config = {
           title: "Menu",
           items: [
             {
-              label: "Docs",
+              label: "Overview",
               to: "/docs/introduction",
+            },
+            {
+              label: "Payments",
+              to: "/docs/Payments/Brazil/simple-pix",
+            },
+            {
+              label: "Two Step Payments",
+              to: "/docs/Payment%20Order/create-payment-order",
             },
             {
               label: "Checkout",
               to: "/docs/Checkout/",
             },
+            // {
+            //   label: "Reports",
+            //   to: "/docs/Reports/",
+            // },
             {
               label: "API References",
               to: "https://documenter.getpostman.com/view/27205548/2sA3JQ4eeP",
