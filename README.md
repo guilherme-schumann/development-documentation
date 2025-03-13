@@ -1,41 +1,35 @@
-# Website
+# Epag Documentation
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+This repository contains the source code for the Epag Documentation website built with [Docusaurus](https://docusaurus.io/). The documentation is managed with a Dockerized setup for simplified development and deployment.
 
-### Installation
+## Table of Contents
 
-```
-$ yarn
-```
+- [Introduction](#introduction)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Running the Project with Docker](#running-the-project-with-docker)
+  - [Using Docker Compose](#using-docker-compose)
+  - [Running with Docker Directly](#running-with-docker-directly)
+- [Local Development](#local-development)
+- [Building the Site](#building-the-site)
+- [Deployment](#deployment)
+- [License](#license)
 
-### Local Development
+## Introduction
 
-```
-$ yarn start
-```
+Epag Documentation is a Docusaurus-based documentation project that helps you organize and share your documents. It is designed to be simple to run and maintain, especially with the Dockerized setup provided.
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+## Prerequisites
 
-### Build
+- **Docker**: Ensure you have Docker installed on your system.
+- **Docker Compose**: Required for the Docker Compose setup.
 
-```
-$ yarn build
-```
+> You can download Docker from [docker.com](https://www.docker.com/).
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+## Installation
 
-### Deployment
+Clone the repository and navigate into the project directory:
 
-Using SSH:
-
-```
-$ USE_SSH=true yarn deploy
-```
-
-Not using SSH:
-
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+```bash
+git clone https://github.com/your-username/epag-documentation.git
+cd epag-documentation
