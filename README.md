@@ -1,41 +1,98 @@
-# Website
+# Welcome to **Epag Documentation**
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+Our comprehensive developer resources and API documentation are crafted to provide developers with an in-depth understanding of epag's suite of products. These materials serve as a guide to explore the robust features we offer and the versatile applications of our API. Developers can delve into detailed examples, best practices, and custom integration strategies that showcase the potential of our platform. Whether you're looking to streamline payment processes, enhance user experience, or integrate advanced functionalities, our documentation is designed to support you every step of the way.
 
-### Installation
+This repository contains the source code for the Epag Documentation website built with [Docusaurus](https://docusaurus.io/). It leverages a Dockerized setup to simplify both local development and deployment.
 
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Prerequisites](#prerequisites)
+- [Running the Project with Docker](#running-the-project-with-docker)
+  - [Using Docker Compose](#using-docker-compose)
+  - [Running with Docker Directly](#running-with-docker-directly)
+- [Local Development](#local-development)
+- [Building Documentation](#building-documentation)
+
+## Introduction
+
+Epag Documentation is more than just a site—it’s your portal into understanding and utilizing the full spectrum of epag’s innovative solutions. Crafted with Docusaurus, this project ensures that the documentation is both robust and easily maintainable. With our Docker setup, you can quickly spin up the environment, allowing you to focus on exploring and integrating the API’s capabilities into your projects.
+
+## Prerequisites
+
+- **Docker**: Ensure you have Docker installed on your system.
+- **Docker Compose**: Required for the Docker Compose setup.
+
+> You can download Docker from [docker.com](https://www.docker.com/).
+
+## Running the Project with Docker
+
+The project is pre-configured with a `Dockerfile` and a `docker-compose.yml` file to ease the process of running the documentation site.
+
+### Using Docker Compose
+
+1. Build and Start the Container
+Run the following command to build the Docker image and start the container:
+
+```bash
+docker-compose up --build
 ```
-$ yarn
+
+2. Access localhost
+Open your browser and navigate to [http://localhost:3000](http://localhost:3000) to view the documentation.
+
+3. Stopping the Container
+To stop the container, press `Ctrl+C` in your terminal and then run:
+
+```bash
+docker-compose down
 ```
 
-### Local Development
+## Running with Docker Directly
 
-```
-$ yarn start
-```
+If you prefer to run the project using Docker commands without Docker Compose, follow these steps:
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+1. Build the Docker Image
 
-### Build
-
-```
-$ yarn build
+```bash
+docker build -t epag-docs .
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-### Deployment
-
-Using SSH:
-
-```
-$ USE_SSH=true yarn deploy
+2. Run the Container
+```bash
+docker run -d -p 3000:3000 --name docusaurus epag-docs
 ```
 
-Not using SSH:
+3. Access localhost
 
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
+Navigate to [http://localhost:3000](http://localhost:3000) in your web browser.
+
+4. Stopping and Removing the Container
+```bash
+docker stop docusaurus
+docker rm docusaurus
 ```
 
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+## Local Development
+
+If you want to work on the project locally without Docker:
+
+1. Install Node.js (version >= 18.0) if you haven't already.
+2. Install dependencies:
+```bash
+npm install
+```
+3. Start the development server:
+```bash
+npm run start
+```
+
+The development server will run on [http://localhost:3000](http://localhost:3000).
+
+## Building Documentation
+
+To generate the static files for production:
+```bash
+npm run build
+```
+The output will be available in the `build` directory.
