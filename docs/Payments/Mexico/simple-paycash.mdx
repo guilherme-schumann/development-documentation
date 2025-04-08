@@ -1,7 +1,7 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Simple Paycash
+# Paycash
 
 ```jsx
   https://api-sandbox.epag.io/paycash/simple
@@ -22,6 +22,31 @@ The way Paycash works is quite straightforward:
   - The customer then visits any of the numerous payment points to make the payment.
   - The payment is processed, and the business is notified right away.
 
+## Paycash Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Payer
+    participant Merchant
+    participant epag
+    participant PaycashProvider as Paycash Provider
+
+    Payer ->> Merchant: Paycash Checkout
+    Merchant ->> epag: Paycash Payment Request
+    epag ->> PaycashProvider: Generate Paycash Reference
+    PaycashProvider ->> epag: Paycash Reference
+    epag ->> Merchant: Paycash Reference
+    Merchant ->> Payer: Share Paycash Reference
+    PaycashProvider -->> Payer: Email With Payment Instructions
+    Payer -->> PaycashProvider: Payment at Paycash Location
+    PaycashProvider -->> epag: Payment Notification
+    epag -->> Merchant: Callback Notification
+    Merchant ->> epag: GET Transaction Status
+    epag ->> Merchant: Transaction Status
+    Merchant ->> Payer: Payment Received
+```
+
 ## HTTP POST /paycash/simple
 
 **Description**
@@ -32,6 +57,7 @@ This endpoint is used to initiate a payment transaction using Paycash. The reque
 
   - The same integration should work by changing the payment country and payment currency.
   - Each country provides a reference code with a length of 16 characters, with the exception of Mexico, which issues a 13-character.
+
 
 ## Request Fields
 

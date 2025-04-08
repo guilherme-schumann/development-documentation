@@ -9,6 +9,26 @@ import TabItem from '@theme/TabItem';
 
 Processes an **OXXO** payment order that were already created using the `Create Payment Order` method.
 
+Here is a summary of the flow for a payment using OXXO.
+
+### 1. Customer Checkout:
+The customer shops online and proceeds to the checkout page.
+They select OXXO as their preferred payment method.
+
+### 2. Voucher Generation:
+The online system generates a payment voucher. This voucher contains a unique barcode and a reference number.
+The customer receives this voucher, which they can either print or save on their mobile device.
+
+### 3. In-Store Payment:
+The customer takes the voucher to any OXXO convenience store.
+They present the voucher to the cashier and pay the exact amount in cash.
+The cashier scans the barcode, and the payment is processed.
+
+### 4. Payment Confirmation:
+After the customer pays at the OXXO store, the payment information is transmitted to the payment processor. OXXO sends its payment report approximately between 10 and 11 AM Mexico City time. Our API updates immediately upon receiving their report, so daily updates will be reflected during those hours.
+The merchant receives confirmation of the payment, typically within the next business day.
+The Merchant can then proceed with fulfilling the customers order.
+
 ## Request Fields
 
 - `method` (required/string): Payment method. Valid option: `OXXO`.

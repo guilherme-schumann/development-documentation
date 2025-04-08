@@ -1,10 +1,36 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Simple PicPay
+# PicPay
 
 ```jsx
   https://api-sandbox.epag.io/picpay/simple
+```
+
+## PicPay Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Payer
+    participant Merchant
+    participant epag
+    participant PicPayProvider as PicPay Provider
+
+    Payer ->> Merchant: PicPay Checkout
+    Merchant ->> epag: PicPay Payment Request
+    epag ->> PicPayProvider: PicPay Payment Request
+    PicPayProvider ->> Payer: Payment Request (Push Notification + In-App Request)
+    PicPayProvider ->> epag: PicPay Payment Instructions
+    epag ->> Merchant: PicPay Payment Instructions
+    Merchant ->> Payer: PicPay Payment Instructions
+    Payer -->> PicPayProvider: Payment
+    PicPayProvider -->> epag: Payment Notification
+    epag -->> Merchant: Callback Notification
+    Merchant ->> epag: GET Transaction Status
+    epag ->> Merchant: Transaction Status
+    Merchant ->> Payer: Payment Received
+
 ```
 
 ## Request Description

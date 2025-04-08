@@ -1,10 +1,36 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Simple Boleto
+# Boleto
 
 ```jsx
   https://api-sandbox.epag.io/boleto/simple
+```
+
+## Boleto Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Payer
+    participant Merchant
+    participant epag
+    participant BoletoProvider as Boleto Provider
+
+    Payer ->> Merchant: Boleto Checkout
+    Merchant ->> epag: Boleto Payment Request
+    epag ->> BoletoProvider: Boleto Payment Request
+    BoletoProvider ->> epag: Boleto Payment Instructions
+    epag ->> Merchant: Boleto Payment Instructions
+    Merchant ->> Payer: Boleto Payment Instructions
+    BoletoProvider -->> Payer: Email With Payment Instructions
+    Payer -->> BoletoProvider: Payment
+    BoletoProvider -->> epag: Payment Notification
+    epag -->> Merchant: Callback Notification
+    Merchant ->> epag: GET Transaction Status
+    epag ->> Merchant: Transaction Status
+    Merchant ->> Payer: Payment Received
+
 ```
 
 ## Request Body

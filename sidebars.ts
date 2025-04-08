@@ -98,15 +98,24 @@ const sidebars: SidebarsConfig = {
         'Payments/Brazil/simple-boleto',
         {
           type: 'category',
-          label: 'Token Payment',
+          label: 'Credit Card',
           items: [
-            'Payments/Brazil/Token Payment/create-a-person-credit-card',
-            'Payments/Brazil/Token Payment/process-token-payments',
-            'Payments/Brazil/Token Payment/capture-pre-auth-token-payment',
-            'Payments/Brazil/Token Payment/cancel-pre-auth-token-payment',
-            'Payments/Brazil/Token Payment/delete-a-credit-card',
-            'Payments/Brazil/Token Payment/delete-a-person',
-            'Payments/Brazil/Token Payment/get-card-status',
+            'Payments/Brazil/Credit Card/simple-credit-card',
+            'Payments/Brazil/Credit Card/credit-card-3ds',
+            'Payments/Brazil/Credit Card/debit-cards',
+            {
+              type: 'category',
+              label: 'Token Payment',
+              items: [
+                'Payments/Brazil/Credit Card/Token Payment/create-a-person-credit-card',
+                'Payments/Brazil/Credit Card/Token Payment/process-token-payments',
+                'Payments/Brazil/Credit Card/Token Payment/capture-pre-auth-token-payment',
+                'Payments/Brazil/Credit Card/Token Payment/cancel-pre-auth-token-payment',
+                'Payments/Brazil/Credit Card/Token Payment/delete-a-credit-card',
+                'Payments/Brazil/Credit Card/Token Payment/delete-a-person',
+                'Payments/Brazil/Credit Card/Token Payment/get-card-status',
+              ],
+            },
           ],
         },
       ],
@@ -338,6 +347,18 @@ const sidebars: SidebarsConfig = {
   ],
   reportsSidebar: [
     'Reports/reports',
+    'Reports/understanding-reports-module',
+    'Reports/get-report-types',
+    'Reports/get-available-fields',
+    'Reports/retrieve-reports',
+    'Reports/execute-a-report',
+    'Reports/schedule-a-report',
+    'Reports/summary',
+  ],
+  payoutsSidebar: [
+    'Payouts/payouts',
+    'Payouts/payouts-brazil',
+    'Payouts/payouts-mexico',
   ],
 };
 

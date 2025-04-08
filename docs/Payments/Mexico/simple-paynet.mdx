@@ -1,10 +1,35 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Simple Paynet
+# Paynet
 
 ```jsx
   https://api-sandbox.epag.io/paynet/simple
+```
+
+## Paynet Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Payer
+    participant Merchant
+    participant epag
+    participant PaynetProvider as Paynet Provider
+
+    Payer ->> Merchant: Paynet Checkout
+    Merchant ->> epag: Paynet Payment Request
+    epag ->> PaynetProvider: Paynet Payment Request
+    PaynetProvider ->> epag: Paynet Payment Instructions
+    epag ->> Merchant: Paynet Payment Instructions
+    Merchant ->> Payer: Paynet Payment Instructions
+    PaynetProvider -->> Payer: Email With Payment Instructions
+    Payer -->> PaynetProvider: Payment at Paynet Location
+    PaynetProvider -->> epag: Payment Notification
+    epag -->> Merchant: Callback Notification
+    Merchant ->> epag: GET Transaction Status
+    epag ->> Merchant: Transaction Status
+    Merchant ->> Payer: Payment Received
 ```
 
 ## Request Fields
