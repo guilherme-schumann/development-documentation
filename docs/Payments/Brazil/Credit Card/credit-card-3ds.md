@@ -28,11 +28,12 @@ sequenceDiagram
     participant AuthenticationProvider as Authentication Provider
 
     Payer ->> Merchant: Card Payment Checkout
-    Merchant -->> epag: Card Payment Request
-    Merchant ->> epag: Request 3DS SDK Authentication
-    epag ->> Payer: Loads 3DS SDK on the user device
-    Payer ->> AuthenticationProvider: Send Authentication Details
+    Merchant ->> Payer: Loads 3DS on the user device
+    Merchant ->> epag: Card Payment Request
+    Payer -->> AuthenticationProvider: Send Authentication Details
     AuthenticationProvider ->> Payer: Authentication Successful
+    AuthenticationProvider ->> epag: Authentication Successful
+    epag ->> Merchant: Authentication Successful
     epag ->> Acquirer: Process Payment Request
     Acquirer ->> epag: Payment Authorization
     epag -->> Merchant: Callback Notification
