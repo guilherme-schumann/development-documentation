@@ -1,7 +1,7 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Simple PIX
+# PIX
 
 ```jsx
   https://api-sandbox.epag.io/pix/simple
@@ -15,6 +15,30 @@ This process is designed with a smart approach to handle the compulsory Tax ID v
   - In order to use this process just send the required fields as marked below.
 - Utilization of a CPF (Cadastro de Pessoas Físicas) linked to the transaction, which merchants have previously gathered, or the option to collect it on the checkout page—this method generally yields a lower conversion rate, but can be advantageous in certain scenarios based on the merchant's specific needs.
   - In order to this process send the payer's CPF or CNPJ on the tax_id field. In the case of an invalid tax id the transaction may be declined.
+
+## PIX Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Payer
+    participant Merchant
+    participant epag
+    participant PIXProvider as PIX Provider
+    
+    Payer ->> Merchant: PIX Checkout
+    Merchant ->> epag: PIX Payment Request
+    epag ->> PIXProvider: PIX Payment Request
+    PIXProvider ->> epag: PIX Payment Instructions
+    epag ->> Merchant: PIX Payment Instructions
+    Merchant ->> Payer: PIX Payment Instructions
+    Payer -->> PIXProvider: Payment
+    PIXProvider -->> epag: Payment Notification
+    epag -->> Merchant: Callback Notification
+    Merchant ->> epag: GET Transaction Status
+    epag ->> Merchant: Transaction Status
+    Merchant ->> Payer: Payment Received
+```
 
 ## Request description
 

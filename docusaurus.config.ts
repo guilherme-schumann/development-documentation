@@ -13,7 +13,7 @@ const config: Config = {
   url: 'https://your-docusaurus-site.example.com',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/epag',
   markdown: {
     mermaid: true, // Able Mermaid to do Diagram in Markdown
   },
@@ -99,6 +99,12 @@ const config: Config = {
           position: "left",
           label: "Checkout",
         },
+        {
+          type: "docSidebar",
+          sidebarId: "payoutsSidebar",
+          position: "left",
+          label: "Payouts",
+        },
         // {
         //   type: "docSidebar",
         //   sidebarId: "reportsSidebar",
@@ -143,6 +149,10 @@ const config: Config = {
             {
               label: "Checkout",
               to: "/docs/Checkout/",
+            },
+            {
+              label: "Payouts",
+              to: "/docs/Payouts/",
             },
             // {
             //   label: "Reports",

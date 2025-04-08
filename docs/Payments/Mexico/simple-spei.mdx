@@ -1,10 +1,32 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Simple SPEI
+# SPEI
 
 ```jsx
   https://api-sandbox.epag.io/spei/simple
+```
+## SPEI Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Payer
+    participant Merchant
+    participant epag
+    participant SPEIProvider as SPEI Provider
+    Payer ->> Merchant: SPEI Checkout
+    Merchant ->> epag: SPEI Payment Request
+    epag ->> SPEIProvider: SPEI Payment Request
+    SPEIProvider ->> epag: SPEI Payment Instructions
+    epag ->> Merchant: SPEI Payment Instructions
+    Merchant ->> Payer: SPEI Payment Instructions
+    Payer -->> SPEIProvider: Payment
+    SPEIProvider -->> epag: Payment Notification
+    epag -->> Merchant: Callback Notification
+    Merchant ->> epag: GET Transaction Status
+    epag ->> Merchant: Transaction Status
+    Merchant ->> Payer: Payment Received
 ```
 
 ## Request Fields

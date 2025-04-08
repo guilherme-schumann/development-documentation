@@ -1,11 +1,35 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Simple OXXO
+# OXXO
 
 ```jsx
   https://api-sandbox.epag.io/oxxo/simple
 ```
+## OXXO Flow
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Payer
+    participant Merchant
+    participant epag
+    participant OXXOProvider as OXXO Provider
+
+    Payer ->> Merchant: OXXO Checkout
+    Merchant ->> epag: OXXO Payment Request
+    epag ->> OXXOProvider: OXXO Payment Request
+    OXXOProvider ->> epag: OXXO Payment Instructions
+    epag ->> Merchant: OXXO Payment Instructions
+    Merchant ->> Payer: OXXO Payment Instructions
+    OXXOProvider -->> Payer: Email With Payment Instructions
+    Payer -->> OXXOProvider: Payment at OXXO Store
+    OXXOProvider -->> epag: Payment Notification
+    epag -->> Merchant: Callback Notification
+    Merchant ->> epag: GET Transaction Status
+    epag ->> Merchant: Transaction Status
+    Merchant ->> Payer: Payment Received
+```
+
 
 ## Request Fields
 
