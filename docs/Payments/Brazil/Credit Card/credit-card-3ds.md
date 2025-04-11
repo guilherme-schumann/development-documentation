@@ -32,9 +32,33 @@ sequenceDiagram
     Merchant ->> epag: Card Payment Request
     Payer -->> AuthenticationProvider: Send Authentication Details
     AuthenticationProvider ->> Payer: Authentication Successful
-    AuthenticationProvider ->> epag: Authentication Successful
-    epag ->> Merchant: Authentication Successful
-    epag ->> Acquirer: Process Payment Request
+    AuthenticationProvider ->> epag: 3DS Authentication Data
+    epag ->> Merchant: 3DS Authentication Data
+    epag ->> Acquirer: Process Payment Request With Authentication Data
+    Acquirer ->> epag: Payment Authorization
+    epag -->> Merchant: Callback Notification
+    Merchant ->> epag: GET Transaction Status
+    epag ->> Merchant: Transaction Status
+    Merchant ->> Payer: Payment Received & Order Confirmed
+```
+## 3DS Card Payment Checkout External Authentication
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Payer
+    participant Merchant
+    participant epag
+    participant Acquirer
+    participant AuthenticationProvider as Authentication Provider
+
+    Payer ->> Merchant: Card Payment Checkout
+    Merchant ->> Payer: Loads 3DS on the user device
+    Payer -->> AuthenticationProvider: Send Authentication Details
+    AuthenticationProvider ->> Payer: Authentication Successful
+    AuthenticationProvider ->> Merchant: 3DS Authentication Data
+    Merchant ->> epag: Card Payment Request with 3DS Authentication Data
+    epag ->> Acquirer: Process Payment Request with 3DS Authentication Data
     Acquirer ->> epag: Payment Authorization
     epag -->> Merchant: Callback Notification
     Merchant ->> epag: GET Transaction Status
@@ -128,4 +152,3 @@ The following fields are used for **3DS authentication** within the payment requ
 ```
 
 This document provides the necessary details to implement **3DS authentication** in credit card transactions securely.
-
