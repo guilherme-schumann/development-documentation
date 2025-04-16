@@ -2,26 +2,18 @@ import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
-
 const config: Config = {
   title: 'epag Documentation',
   tagline: 'Check out our guides and examples for integrating epag',
   favicon: 'img/Favicon-epag.ico',
-
-  // Set the production url of your site here
   url: 'https://your-docusaurus-site.example.com',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/epag',
   markdown: {
-    mermaid: true, // Able Mermaid to do Diagram in Markdown
+    mermaid: true,
   },
-  themes: ['@docusaurus/theme-mermaid'], // Adiciona o tema Mermaid
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'epag', // Usually your GitHub org/user name.
-  projectName: 'Documentation', // Usually your repo name.
+  themes: ['@docusaurus/theme-mermaid'],
+  organizationName: 'epag',
+  projectName: 'Documentation',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -40,8 +32,6 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl:undefined,
         },
         blog: {
@@ -50,10 +40,7 @@ const config: Config = {
             type: ['rss', 'atom'],
             xslt: true,
           },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl: undefined,
-          // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
@@ -66,7 +53,6 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
       logo: {
@@ -99,12 +85,12 @@ const config: Config = {
           position: "left",
           label: "Checkout",
         },
-        {
-          type: "docSidebar",
-          sidebarId: "payoutsSidebar",
-          position: "left",
-          label: "Payouts",
-        },
+        // {
+        //   type: "docSidebar",
+        //   sidebarId: "payoutsSidebar",
+        //   position: "left",
+        //   label: "Payouts",
+        // },
         // {
         //   type: "docSidebar",
         //   sidebarId: "reportsSidebar",
@@ -140,23 +126,23 @@ const config: Config = {
             },
             {
               label: "Payments",
-              to: "/docs/Payments/Brazil/simple-pix",
+              to: "/docs/payments/brazil/pix",
             },
             {
               label: "Two Step Payments",
-              to: "/docs/Payment%20Order/create-payment-order",
+              to: "/docs/two-step-payments/create-payment-order",
             },
             {
               label: "Checkout",
-              to: "/docs/Checkout/",
-            },
-            {
-              label: "Payouts",
-              to: "/docs/Payouts/",
+              to: "/docs/checkout/",
             },
             // {
+            //   label: "Payouts",
+            //   to: "/docs/payouts/",
+            // },
+            // {
             //   label: "Reports",
-            //   to: "/docs/Reports/",
+            //   to: "/docs/reports/",
             // },
             {
               label: "API References",

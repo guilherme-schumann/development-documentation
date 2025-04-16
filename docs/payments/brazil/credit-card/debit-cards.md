@@ -15,7 +15,7 @@ This document details how to process **debit card payments**. Debit card transac
 3. The bank verifies fund availability and approves the transaction.
 4. The payment is instantly debited from the customer’s account.
 
-## Debit Card Payment Flow
+## Debit Card Payment Checkout Internal Authentication (epag)
 
 ```mermaid
 sequenceDiagram
@@ -24,12 +24,44 @@ sequenceDiagram
     participant Merchant
     participant epag
     participant Acquirer
+    participant AuthenticationProvider as Authentication Provider
 
-    Payer ->> Merchant: Debit Card Checkout
-    Merchant ->> epag: Debit Card Payment Request
-    epag ->> Acquirer: Process Payment Request
-    Acquirer ->> epag: Payment Approved
-    epag ->> Merchant: Payment Confirmation
+    Payer ->> Merchant: Card Payment Checkout
+    Merchant ->> Payer: Loads on the user device
+    Merchant ->> epag: Card Payment Request
+    Payer -->> AuthenticationProvider: Send Authentication Details
+    AuthenticationProvider ->> Payer: Authentication Successful
+    AuthenticationProvider ->> epag: Authentication Data
+    epag ->> Merchant: Authentication Data
+    epag ->> Acquirer: Process Payment Request With Authentication Data
+    Acquirer ->> epag: Payment Authorization
+    epag -->> Merchant: Callback Notification
+    Merchant ->> epag: GET Transaction Status
+    epag ->> Merchant: Transaction Status
+    Merchant ->> Payer: Payment Received & Order Confirmed
+```
+## Debit Card Payment Checkout External Authentication
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Payer
+    participant Merchant
+    participant epag
+    participant Acquirer
+    participant AuthenticationProvider as Authentication Provider
+
+    Payer ->> Merchant: Card Payment Checkout
+    Merchant ->> Payer: Loads on the user device
+    Payer -->> AuthenticationProvider: Send Authentication Details
+    AuthenticationProvider ->> Payer: Authentication Successful
+    AuthenticationProvider ->> Merchant: Authentication Data
+    Merchant ->> epag: Card Payment Request with Authentication Data
+    epag ->> Acquirer: Process Payment Request with Authentication Data
+    Acquirer ->> epag: Payment Authorization
+    epag -->> Merchant: Callback Notification
+    Merchant ->> epag: GET Transaction Status
+    epag ->> Merchant: Transaction Status
     Merchant ->> Payer: Payment Received & Order Confirmed
 ```
 

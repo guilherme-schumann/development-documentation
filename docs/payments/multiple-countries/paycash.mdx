@@ -1,0 +1,2688 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Paycash
+
+```jsx
+  https://api-sandbox.epag.io/paycash/simple
+```
+## Overview
+
+Paycash is an Alternative Payment Method (APM) tailored predominantly for cash transactions, mirroring the operational framework of other APMs within the Latin American region.
+
+The way Paycash works is quite straightforward:
+
+- **Payment Transfer:**
+  - A business generates a Paycash reference and shares it with the customer.
+  - The customer enters their mobile banking details, along with the agreement number and the reference.
+  - Once the payment is made, the business is notified immediately.
+
+- **Cash Payment:**
+  - Similarly, a business generates a Paycash reference for the customer.
+  - The customer then visits any of the numerous payment points to make the payment.
+  - The payment is processed, and the business is notified right away.
+
+## Paycash Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Payer
+    participant Merchant
+    participant epag
+    participant PaycashProvider as Paycash Provider
+
+    Payer ->> Merchant: Paycash Checkout
+    Merchant ->> epag: Paycash Payment Request
+    epag ->> PaycashProvider: Generate Paycash Reference
+    PaycashProvider ->> epag: Paycash Reference
+    epag ->> Merchant: Paycash Reference
+    Merchant ->> Payer: Share Paycash Reference
+    PaycashProvider -->> Payer: Email With Payment Instructions
+    Payer -->> PaycashProvider: Payment at Paycash Location
+    PaycashProvider -->> epag: Payment Notification
+    epag -->> Merchant: Callback Notification
+    Merchant ->> epag: GET Transaction Status
+    epag ->> Merchant: Transaction Status
+    Merchant ->> Payer: Payment Received
+```
+
+## HTTP POST /paycash/simple
+
+**Description**
+
+This endpoint is used to initiate a payment transaction using Paycash. The request should include the necessary payment details, person information, and additional data.
+
+**If you already integrated Paycash for another country:**
+
+  - The same integration should work by changing the payment country and payment currency.
+  - Each country provides a reference code with a length of 16 characters, with the exception of Mexico, which issues a 13-character.
+
+
+## Request Fields
+
+- `contract_id` (required/string): Merchant's contract id.
+- `payment` (required/object): The payment data.
+  - `amount` (required/float): Total amount of the payment. Value must have a maximum of two decimal places.
+  - `asset` (required/string): Reference code for asset for the sale's amount.
+  - `currency` (required/string): Currency code in ISO-4217.
+  - `country` (required/string): Country code in ISO 3166-2.
+  - `paycash` (optional/object): The Paycash payment data.
+    - `expiration_date` (optional/date/YYYY-MM-DD): Expiration date (if not informed system will assume 5 days of current date).
+- `person` (required/object): The person data.
+  - `full_name` (required/string): Person’s full name.
+  - `email` (required/string): Person’s email provided to the merchant.
+- `notification_url` (required/required): URL to post callbacks to this payment.
+- `reference_id` (required/required/max 45 chars): External code created by the merchant to reference this payment (e.g. order number). Pattern is free and is used in reports and callbacks.
+- `extra_data` (optional/JSON): Any data pertinent to the merchant.
+- `ip_address` (optional/string): Remote IP Address(IPv4/IPv6).
+
+## Response Fields
+
+- `transaction_status` (string): Current status of the payment.
+- `payment_token` (string): Unique payment identification for this payment.
+- `refresh_token` (string): Updated access token for future calls.
+- `reference_id` (string): External code created by the merchant to reference this payment (e.g. order number).
+- `amount` (string): Amount of this payment.
+- `barcode` (string): Text string containing barcode to pay this payment.
+- `barcode_png_gzip_base_64` (string): Base64 zipped PNG image representation of Paycash barcode.
+- `instructions_link` (string): Link to access the payment instructions.
+- `totals` (object): The payment totals.
+  - `amount` (float): Amount in default region asset.
+  - `asset` (string): Asset used in this amount.
+  - `original_amount` (float): Amount as informed by merchant.
+  - `original_asset` (string): Asset used in this originalAmount.
+  - `customer_fees` (float): Total calculated fee assigned to customer.
+  - `customer_amount` (float): Total amount for customer (amount + customer_fees).
+- `customer_fees` (object): List of incident customer fees and respective values.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+### Body Raw(json)
+
+```jsx title="json"
+{
+    "contract_id": "MY_CONTRACT_ID",
+    "reference_id": "MY_REFERENCE_ID",
+    "notification_url": "https://my.notification.url/callback/",
+    "ip_address": "0.0.0.0",
+    "payment": {
+        "amount": 123.45,
+        "asset": "MXN",
+        "currency": "MXN",
+        "country": "MX",
+        "paycash": {
+            "expiration_date": "2024-12-31"
+        }
+    },
+    "person": {
+        "full_name": "Alice Sonnentag",
+        "email": "alice@sonnentag.com"
+    },
+    "extra_data": {
+        "my-conciliation-number": "xxxxxx"
+    }
+}
+```
+{/* Mexico */}
+<details>
+    <summary>Mexico</summary>
+  <Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "MXN",
+                    "currency": "MXN",
+                    "country": "MX",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "0196e128-c6c7-4249-9f20-21a4c2eb1506",
+              "reference_id": "MY_REFERENCE_ID",
+              "barcode_png_gzip_base_64": "BASE64_ZIPPED_PNG",
+              "barcode": "2521709744061841",
+              "amount": "123.45",
+              "instructions_link": "",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "totals": {
+                "amount": 123.45,
+                "original_amount": 123.45,
+                "original_asset": "MXN",
+                "customer_fees": 0,
+                "customer_amount": 123.45,
+                "asset": "MXN"
+              },
+              "customer_fees": {}
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-17T15:24:38.899+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "payment: must not be null",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "payment: must not be null"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "MXN",
+                    "currency": "MXN",
+                    "country": "MX",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/paycash/simple"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "MXN",
+                    "currency": "MXN",
+                    "country": "MX",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:50:25.715+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "Invalid contract / project",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0021",
+                  "description": "Invalid contract / project"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "MXN",
+                    "currency": "MXN",
+                    "country": "MX",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>
+</details>
+
+{/* Colombia */}
+<details>
+<summary>Colombia</summary>
+<Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "COP",
+                    "currency": "COP",
+                    "country": "CO",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "0196e128-c6c7-4249-9f20-21a4c2eb1506",
+              "reference_id": "MY_REFERENCE_ID",
+              "barcode_png_gzip_base_64": "BASE64_ZIPPED_PNG",
+              "barcode": "2521709744061841",
+              "amount": "123.45",
+              "instructions_link": "",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "totals": {
+                "amount": 123.45,
+                "original_amount": 123.45,
+                "original_asset": "COP",
+                "customer_fees": 0,
+                "customer_amount": 123.45,
+                "asset": "COP"
+              },
+              "customer_fees": {}
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-17T15:24:38.899+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "payment: must not be null",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "payment: must not be null"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "COP",
+                    "currency": "COP",
+                    "country": "CO",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/paycash/simple"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "COP",
+                    "currency": "COP",
+                    "country": "CO",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:50:25.715+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "Invalid contract / project",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0021",
+                  "description": "Invalid contract / project"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "COP",
+                    "currency": "COP",
+                    "country": "CO",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>
+</details>
+
+{/* Costa Rica */}
+<details>
+    <summary>Costa Rica</summary>
+    <Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "CRC",
+                    "currency": "CRC",
+                    "country": "CR",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "0196e128-c6c7-4249-9f20-21a4c2eb1506",
+              "reference_id": "MY_REFERENCE_ID",
+              "barcode_png_gzip_base_64": "BASE64_ZIPPED_PNG",
+              "barcode": "2521709744061841",
+              "amount": "123.45",
+              "instructions_link": "",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "totals": {
+                "amount": 123.45,
+                "original_amount": 123.45,
+                "original_asset": "CRC",
+                "customer_fees": 0,
+                "customer_amount": 123.45,
+                "asset": "CRC"
+              },
+              "customer_fees": {}
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-17T15:24:38.899+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "payment: must not be null",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "payment: must not be null"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "CRC",
+                    "currency": "CRC",
+                    "country": "CR",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/paycash/simple"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "CRC",
+                    "currency": "CRC",
+                    "country": "CR",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:50:25.715+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "Invalid contract / project",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0021",
+                  "description": "Invalid contract / project"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "CRC",
+                    "currency": "CRC",
+                    "country": "CR",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>
+</details>
+
+{/* Ecuador */}
+<details>
+    <summary>Ecuador</summary>
+    <Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "USD",
+                    "currency": "USD",
+                    "country": "EC",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "0196e128-c6c7-4249-9f20-21a4c2eb1506",
+              "reference_id": "MY_REFERENCE_ID",
+              "barcode_png_gzip_base_64": "BASE64_ZIPPED_PNG",
+              "barcode": "2521709744061841",
+              "amount": "123.45",
+              "instructions_link": "",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "totals": {
+                "amount": 123.45,
+                "original_amount": 123.45,
+                "original_asset": "USD",
+                "customer_fees": 0,
+                "customer_amount": 123.45,
+                "asset": "USD"
+              },
+              "customer_fees": {}
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-17T15:24:38.899+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "payment: must not be null",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "payment: must not be null"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "USD",
+                    "currency": "USD",
+                    "country": "EC",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/paycash/simple"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "USD",
+                    "currency": "USD",
+                    "country": "EC",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:50:25.715+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "Invalid contract / project",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0021",
+                  "description": "Invalid contract / project"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "USD",
+                    "currency": "USD",
+                    "country": "EC",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>
+</details>
+
+{/* Guatelama */}
+<details>
+    <summary>Guatelama</summary>
+    <Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "GTQ",
+                    "currency": "GTQ",
+                    "country": "GT",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "0196e128-c6c7-4249-9f20-21a4c2eb1506",
+              "reference_id": "MY_REFERENCE_ID",
+              "barcode_png_gzip_base_64": "BASE64_ZIPPED_PNG",
+              "barcode": "2521709744061841",
+              "amount": "123.45",
+              "instructions_link": "",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "totals": {
+                "amount": 123.45,
+                "original_amount": 123.45,
+                "original_asset": "GTQ",
+                "customer_fees": 0,
+                "customer_amount": 123.45,
+                "asset": "GTQ"
+              },
+              "customer_fees": {}
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-17T15:24:38.899+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "payment: must not be null",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "payment: must not be null"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "GTQ",
+                    "currency": "GTQ",
+                    "country": "GT",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/paycash/simple"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "GTQ",
+                    "currency": "GTQ",
+                    "country": "GT",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:50:25.715+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "Invalid contract / project",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0021",
+                  "description": "Invalid contract / project"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "GTQ",
+                    "currency": "GTQ",
+                    "country": "GT",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>
+</details>
+
+{/* Panama */}
+<details>
+    <summary>Panama</summary>
+    <Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "USD",
+                    "currency": "USD",
+                    "country": "PA",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "0196e128-c6c7-4249-9f20-21a4c2eb1506",
+              "reference_id": "MY_REFERENCE_ID",
+              "barcode_png_gzip_base_64": "BASE64_ZIPPED_PNG",
+              "barcode": "2521709744061841",
+              "amount": "123.45",
+              "instructions_link": "",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "totals": {
+                "amount": 123.45,
+                "original_amount": 123.45,
+                "original_asset": "USD",
+                "customer_fees": 0,
+                "customer_amount": 123.45,
+                "asset": "USD"
+              },
+              "customer_fees": {}
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-17T15:24:38.899+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "payment: must not be null",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "payment: must not be null"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "USD",
+                    "currency": "USD",
+                    "country": "PA",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/paycash/simple"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "USD",
+                    "currency": "USD",
+                    "country": "PA",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:50:25.715+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "Invalid contract / project",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0021",
+                  "description": "Invalid contract / project"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "USD",
+                    "currency": "USD",
+                    "country": "PA",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>
+</details>
+
+{/* Peru */}
+<details>
+    <summary>Peru</summary>
+    <Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "PEN",
+                    "currency": "PEN",
+                    "country": "PE",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "0196e128-c6c7-4249-9f20-21a4c2eb1506",
+              "reference_id": "MY_REFERENCE_ID",
+              "barcode_png_gzip_base_64": "BASE64_ZIPPED_PNG",
+              "barcode": "2521709744061841",
+              "amount": "123.45",
+              "instructions_link": "",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "totals": {
+                "amount": 123.45,
+                "original_amount": 123.45,
+                "original_asset": "PEN",
+                "customer_fees": 0,
+                "customer_amount": 123.45,
+                "asset": "PEN"
+              },
+              "customer_fees": {}
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-17T15:24:38.899+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "payment: must not be null",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "payment: must not be null"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "PEN",
+                    "currency": "PEN",
+                    "country": "PE",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/paycash/simple"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "PEN",
+                    "currency": "PEN",
+                    "country": "PE",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:50:25.715+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "Invalid contract / project",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0021",
+                  "description": "Invalid contract / project"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "PEN",
+                    "currency": "PEN",
+                    "country": "PE",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>
+</details>
+
+{/* Chile */}
+<details>
+    <summary>Chile</summary>
+    <Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "CLP",
+                    "currency": "CLP",
+                    "country": "CL",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "0196e128-c6c7-4249-9f20-21a4c2eb1506",
+              "reference_id": "MY_REFERENCE_ID",
+              "barcode_png_gzip_base_64": "BASE64_ZIPPED_PNG",
+              "barcode": "2521709744061841",
+              "amount": "123.45",
+              "instructions_link": "",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "totals": {
+                "amount": 123.45,
+                "original_amount": 123.45,
+                "original_asset": "CLP",
+                "customer_fees": 0,
+                "customer_amount": 123.45,
+                "asset": "CLP"
+              },
+              "customer_fees": {}
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-17T15:24:38.899+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "payment: must not be null",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "payment: must not be null"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "CLP",
+                    "currency": "CLP",
+                    "country": "CL",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/paycash/simple"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "CLP",
+                    "currency": "CLP",
+                    "country": "CL",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:50:25.715+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "Invalid contract / project",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0021",
+                  "description": "Invalid contract / project"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "CLP",
+                    "currency": "CLP",
+                    "country": "CL",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>
+</details>
+
+{/* Honduras */}
+<details>
+    <summary>Honduras</summary>
+    <Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "HNL",
+                    "currency": "HNL",
+                    "country": "HN",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "0196e128-c6c7-4249-9f20-21a4c2eb1506",
+              "reference_id": "MY_REFERENCE_ID",
+              "barcode_png_gzip_base_64": "BASE64_ZIPPED_PNG",
+              "barcode": "2521709744061841",
+              "amount": "123.45",
+              "instructions_link": "",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "totals": {
+                "amount": 123.45,
+                "original_amount": 123.45,
+                "original_asset": "HNL",
+                "customer_fees": 0,
+                "customer_amount": 123.45,
+                "asset": "HNL"
+              },
+              "customer_fees": {}
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-17T15:24:38.899+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "payment: must not be null",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "payment: must not be null"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "HNL",
+                    "currency": "HNL",
+                    "country": "HN",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/paycash/simple"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "HNL",
+                    "currency": "HNL",
+                    "country": "HN",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:50:25.715+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "Invalid contract / project",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0021",
+                  "description": "Invalid contract / project"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "HNL",
+                    "currency": "HNL",
+                    "country": "HN",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>
+</details>
+
+{/* Dominican Republic */}
+<details>
+    <summary>Dominican Republic</summary>
+    <Tabs>
+
+  <TabItem value="success" label="200 - Success">
+      #### Example Request
+        ```jsx title="200 - Success"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "DOP",
+                    "currency": "DOP",
+                    "country": "DO",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "transaction_status": "PROCESSING",
+              "payment_token": "0196e128-c6c7-4249-9f20-21a4c2eb1506",
+              "reference_id": "MY_REFERENCE_ID",
+              "barcode_png_gzip_base_64": "BASE64_ZIPPED_PNG",
+              "barcode": "2521709744061841",
+              "amount": "123.45",
+              "instructions_link": "",
+              "refresh_token": "MY_ACCESS_TOKEN",
+              "totals": {
+                "amount": 123.45,
+                "original_amount": 123.45,
+                "original_asset": "DOP",
+                "customer_fees": 0,
+                "customer_amount": 123.45,
+                "asset": "DOP"
+              },
+              "customer_fees": {}
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-request" label="400 - Bad Request">
+      #### Example Request
+        ```jsx title="400 - Bad Request"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-17T15:24:38.899+0000",
+              "status": 400,
+              "error": "Bad Request",
+              "message": "payment: must not be null",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0044",
+                  "description": "payment: must not be null"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unauthorized" label="401 - Unauthorized">
+      #### Example Request
+        ```jsx title="401 - Unauthorized"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "DOP",
+                    "currency": "DOP",
+                    "country": "DO",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T15:35:10.131+0000",
+              "status": 401,
+              "error": "Unauthorized",
+              "message": "Access Denied",
+              "path": "/paycash/simple"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="unprocessable-entity" label="422 - Unprocessable Entity">
+      #### Example Request
+        ```jsx title="422 - Unprocessable Entity"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "DOP",
+                    "currency": "DOP",
+                    "country": "DO",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:50:25.715+0000",
+              "status": 422,
+              "error": "Unprocessable Entity",
+              "message": "Invalid contract / project",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.01.0021",
+                  "description": "Invalid contract / project"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+
+    <TabItem value="bad-gateway" label="502 - Bad Gateway">
+      #### Example Request
+        ```jsx title="502 - Bad Gateway"
+            curl --location 'https://api-sandbox.epag.io/paycash/simple' \
+            --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+            --data-raw '{
+                "contract_id": "MY_CONTRACT_ID",
+                "reference_id": "MY_REFERENCE_ID",
+                "notification_url": "https://my.notification.url/callback/",
+                "ip_address": "0.0.0.0",
+                "payment": {
+                    "amount": 123.45,
+                    "asset": "DOP",
+                    "currency": "DOP",
+                    "country": "DO",
+                    "oxxo": {
+                        "expiration_date": "2024-12-31",
+                        "description": "Payment via OXXO"
+                    }
+                },
+                "person": {
+                    "full_name": "Alice Sonnentag",
+                    "email": "alice@sonnentag.com"
+                },
+                "extra_data": {
+                    "my-conciliation-number": "xxxxxx"
+                }
+            }'
+        ```
+
+      #### Example Response
+        ```jsx title="Header"
+          Content-Type: application/json
+        ```  
+        ```jsx title="Body"
+            {
+              "timestamp": "2024-01-16T20:12:28.156+0000",
+              "status": 502,
+              "error": "Bad Gateway",
+              "message": "There was an issue when contacting an external API, please contact support",
+              "path": "/paycash/simple",
+              "errors": [
+                {
+                  "code": "00.03.0001",
+                  "description": "There was an issue when contacting an external API, please contact support"
+                }
+              ],
+              "refresh_token": "MY_ACCESS_TOKEN"
+            }
+        ```
+    </TabItem>
+    
+</Tabs>
+</details>
