@@ -152,4 +152,3 @@ The following fields are used for **3DS authentication** within the payment requ
 ```
 
 This document provides the necessary details to implement **3DS authentication** in credit card transactions securely.
-

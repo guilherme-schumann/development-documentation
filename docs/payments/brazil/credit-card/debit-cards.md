@@ -115,4 +115,3 @@ Some debit card transactions require **3D Secure authentication**, similar to cr
 - **Refund processing** may vary depending on the bank’s policies.
 
 By supporting debit card payments, merchants can provide **real-time transactions** with added security measures.
-
