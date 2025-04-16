@@ -7,8 +7,6 @@ sidebar_position: 4
 
 The following diagram covers the possible status flow for all our transactions. For every status change a webhook notification is sent to the merchant's API.
 
-<!-- ![Transaction Status Map](./img/transaction-status-map.png) -->
-
 ```mermaid
     graph TD;
     %% Define the main starting point
