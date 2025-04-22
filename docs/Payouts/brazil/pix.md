@@ -2,7 +2,8 @@
 displayed_sidebar: payoutsSidebar
 ---
 
-# Payout to Brazil (PIX)
+
+# PIX
 
 To send a payout to Brazil, the payout_method must be set to PIX. In the required_BR object, provide the PIX key of the customer.
 

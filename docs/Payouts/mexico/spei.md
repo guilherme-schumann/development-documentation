@@ -2,7 +2,7 @@
 displayed_sidebar: payoutsSidebar
 ---
 
-# Payout to Mexico (SPEI)
+# SPEI
 
 To send a payout to Mexico, set the `payout_method` to `SPEI`. The `required_MX` object must include both the `bank_code` and `clabe` of the recipient.
 
