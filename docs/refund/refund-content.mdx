@@ -1,0 +1,344 @@
+---
+displayed_sidebar: docSidebar
+sidebar_position: 18
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Refund
+
+```jsx
+https://api-sandbox.epag.io/refund
+```
+
+To request a refund for a transaction, please note that partial refunds are possible only if the payment method permits.
+
+Refunds should be issued in the same currency used for the original payment. At present, only transactions made in BRL are eligible for refunds.
+
+The permissible time frame for refund requests is as follows from the date of payment:
+
+| Payment method | Time limit | 
+| -------------- | ---------- |
+| PIX            | 90 days    |
+| Creadit Card   | 6 months   |
+| BOLETO         | No limit   |
+
+### Request Fields:
+
+- <code>payment_token:</code> (**required**/string): Token to identify the payment.
+- <code>amount:</code> (optional/float): Amount to be refunded. Must be equal or inferior to the customer amount. If absent, the total amount will be used.
+- <code>type:</code> (**required**/string): <code>CHECKING</code> or <code>SAVINGS</code>. Required only if payment's method is equal to <code>BOLETO</code>.
+- <code>bank_number:</code> (**required**/string): The number of the bank. Required only if payment's method is equal to <code>BOLETO</code>.
+- <code>agency_number:</code> (**required**/string): The agency number. Required only if payment's method is equal to <code>BOLETO</code>.
+- <code>agency_check_digit:</code> (**required**/string): The agency check digit. Required only if payment's method is equal to <code>BOLETO</code>.
+- <code>account_number:</code> (**required**/string): The account number. Required only if payment's method is equal to <code>BOLETO</code>.
+- <code>account_check_digit:</code> (**required**/string): The account check digit. Required only if payment's method is equal to <code>BOLETO</code>.
+- <code>bank_code:</code> (**required**/number): The code of the institution to which the payment is directed. Required only if payment's method is equal to <code>OXXO</code>, <code>PAYNET</code> or <code>SPEI</code>.
+- <code>clabe:</code> (**required**/string): CLABE customer interbank. Required only if payment's method is equal to <code>OXXO</code>, <code>PAYNET</code> or <code>SPEI</code>.
+
+### Responde Fields:
+
+- <code>refund_id:</code> The refund id.
+- <code>payment_token:</code> The refunded payment id.
+- <code>created_at:</code> Refund creation date.
+- <code>refund_status:</code> The refund status. Possible values: REQUESTED, PROCESSING, COMPLETED, FAILED.
+- <code>refresh_token:</code> Updated auth token for next calls.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+```jsx title="Body raw (json)"
+{
+    "payment_token": "MY_PAYMENT_TOKEN",
+    "amount": 123.45,
+    "type": "CHECKING",
+    "bank_number": "237",
+    "agency_number": "12345",
+    "agency_check_digit": "3",
+    "account_number": "123456",
+    "account_check_digit": "4",
+    "bank_code": 123456,
+    "clabe": "646180179900004256"
+}
+```
+
+#### Example Request
+
+<Tabs>
+  <TabItem value="success-credit-debit" label="200 - Credit/Debit Card" default>
+    #### Example Request
+      ```jsx title="200 - Credit/Debit Card"
+        curl --location 'https://api-sandbox.epag.io/refund' \
+        --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+        --data '{
+            "payment_token": "MY_PAYMENT_TOKEN",
+            "amount": 123.45
+        }'
+      ```
+    
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ``` 
+      ```jsx title="Body"
+        {
+          "refund_id": 1,
+          "payment_token": "42afe884-f047-4452-a3db-65a7de76a9c5",
+          "created_at": "2019-03-10 12:24:33.657",
+          "refund_status": "PROCESSING",
+          "refresh_token": "MY_ACCESS_TOKEN"
+        }
+      ```      
+  </TabItem>
+  <TabItem value="200-boleto" label="200 - Boleto">
+    #### Example Request
+      ```jsx title="200 - Boleto"
+        curl --location 'https://api-sandbox.epag.io/refund' \
+        --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+        --data '{
+              "payment_token": "MY_PAYMENT_TOKEN",
+              "amount": 123.45,
+              "type": "CHECKING",
+              "bank_number": "237",
+              "agency_number": "12345",
+              "agency_check_digit": "3",
+              "account_number": "123456",
+              "account_check_digit": "4"
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "refund_id": 1,
+            "payment_token": "42afe884-f047-4452-a3db-65a7de76a9c5",
+            "created_at": "2019-03-10 12:24:33.657",
+            "refund_status": "PROCESSING",
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+  <TabItem value="200-pix" label="200 - PIX">
+    #### Example Request
+      ```jsx title="200 - PIX"
+          curl --location 'https://api-sandbox.epag.io/refund' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "payment_token": "MY_PAYMENT_TOKEN",
+              "amount": 123.45
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "refund_id": 1,
+            "payment_token": "42afe884-f047-4452-a3db-65a7de76a9c5",
+            "created_at": "2019-03-10 12:24:33.657",
+            "refund_status": "PROCESSING",
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+  <TabItem value="200-oxxo" label="200 - OXXO">
+    #### Example Request
+      ```jsx title="200 - OXXO"
+          curl --location 'https://api-sandbox.epag.io/refund' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "payment_token": "MY_PAYMENT_TOKEN",
+              "amount": 123.45,
+              "bank_code": 123456,
+              "clabe": "646180179900004256"
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "refund_id": 1,
+            "payment_token": "42afe884-f047-4452-a3db-65a7de76a9c5",
+            "created_at": "2019-03-10 12:24:33.657",
+            "refund_status": "PROCESSING",
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+  <TabItem value="200-paynet" label="200 - Paynet">
+    #### Example Request
+      ```jsx title="200 - Paynet"
+          curl --location 'https://api-sandbox.epag.io/refund' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "payment_token": "MY_PAYMENT_TOKEN",
+              "amount": 123.45,
+              "bank_code": 123456,
+              "clabe": "646180179900004256"
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "refund_id": 1,
+            "payment_token": "42afe884-f047-4452-a3db-65a7de76a9c5",
+            "created_at": "2019-03-10 12:24:33.657",
+            "refund_status": "PROCESSING",
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+  <TabItem value="200-spei" label="200 - SPEI">
+    #### Example Request
+      ```jsx title="200 - SPEI"
+          curl --location 'https://api-sandbox.epag.io/refund' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "payment_token": "MY_PAYMENT_TOKEN",
+              "amount": 123.45,
+              "bank_code": 123456,
+              "clabe": "646180179900004256"
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "refund_id": 1,
+            "payment_token": "42afe884-f047-4452-a3db-65a7de76a9c5",
+            "created_at": "2019-03-10 12:24:33.657",
+            "refund_status": "PROCESSING",
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+  <TabItem value="200-picpay" label="200 - PicPay">
+    #### Example Request
+      ```jsx title="200 - PicPay"
+          curl --location 'https://api-sandbox.epag.io/refund' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "payment_token": "MY_PAYMENT_TOKEN",
+              "amount": 123.45
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "refund_id": 1,
+            "payment_token": "42afe884-f047-4452-a3db-65a7de76a9c5",
+            "created_at": "2019-03-10 12:24:33.657",
+            "refund_status": "PROCESSING",
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+  <TabItem value="bad-request" label="400 - Bad Request">
+    #### Example Request
+      ```jsx title="400 - Bad Request"
+        curl --location 'https://api-sandbox.epag.io/refund' \
+        --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+        --data '{
+            "payment_token": "MY_PAYMENT_TOKEN"
+        }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-01-19T13:34:45.916+0000",
+            "status": 400,
+            "error": "Bad Request",
+            "message": "Current payment status does not allow refund",
+            "path": "/refund",
+            "errors": [
+              {
+                "code": "01.05.0030",
+                "description": "Current payment status does not allow refund"
+              }
+            ],
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+  <TabItem value="unauthorized" label="401 - Unauthorized">
+    #### Example Request
+      ```jsx title="401 - Unauthorized"
+          curl --location 'https://api-sandbox.epag.io/refund' \
+          --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+          --data '{
+              "payment_token": "MY_PAYMENT_TOKEN"
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-01-19T13:42:12.506+0000",
+            "status": 401,
+            "error": "Unauthorized",
+            "message": "Access Denied",
+            "path": "/refund"
+          }
+      ```
+  </TabItem>
+  <TabItem value="bad-gateway" label="502 - Bad Gateway">
+    #### Example Request
+      ```jsx title="502 - Bad Gateway"
+          curl --location 'https://api-sandbox.epag.io/refund' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "payment_token": "MY_PAYMENT_TOKEN"
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-01-16T20:12:28.156+0000",
+            "status": 502,
+            "error": "Bad Gateway",
+            "message": "There was an issue when contacting an external API, please contact support",
+            "path": "/refund",
+            "errors": [
+              {
+                "code": "00.03.0001",
+                "description": "There was an issue when contacting an external API, please contact support"
+              }
+            ],
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+</Tabs>

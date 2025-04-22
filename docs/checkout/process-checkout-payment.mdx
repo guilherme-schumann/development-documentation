@@ -1,0 +1,300 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Process Checkout Payment
+
+```jsx
+  https://api-sandbox.epag.io/checkout/sendPayment
+```
+
+Processes a **Credit/Debit Card** payment that were already created using the [Checkout Flow](./checkout.md). Call this method after `Get Person & Credit Card ID method`.
+
+## Request Fields
+
+- `contract_id` (required/string): Merchant's contract id.
+- `reference_id` (required/string/max 45 chars): External code created by the merchant to reference this payment (e.g. order number). Pattern is free and is used in reports and callbacks.
+- `notification_url` (optional/string): URL to post callbacks to this payment.
+- `public_person_id` (required/string): Person identification.
+- `public_card_id` (required/string): Card identification.
+- `payment` (required/object): The payment data:
+  - `amount` (required/string): Total amount of the payment. Value must have a maximum of two decimal places and must not be less than BRL 1.00.
+  - `method` (required/string): Payment Method. Valid options: CREDITCARD, DEBITCARD.
+  - `asset` (required/string): Reference code for asset for the sale's amount.
+  - `installments` (required/int): Number of installments. 0 or 1 values are considered as without installments.
+  - `delay_capture` (optional/boolean): true to pre-authorize payment for later capture. Default: false. Pre-auth cancelation has a TTL of 5 days.
+  - `soft_descriptor` (optional/string): Soft descriptor to use at transaction.
+- `extra_data` (optional/JSON): Any data pertinent to the merchant.
+- `ip_address` (optional/string): Remote IP Address(IPv4/IPv6).
+
+## Debit Card Request Fields
+
+- `authentication` (object): The 3DS authentication data:
+  - `cavv` (required/string): Card holder Authentication Verification Value.
+  - `xid` (required/string): Transaction identifier resulting from authentication processing.
+  - `eci` (required/string): Electronic Commerce Indicator.
+  - `version` (required/string): 3DS version used for authentication.
+  - `dstrans_id` (required/string): Unique transaction identifier assigned by the Directory Server (DS) to identify a single transaction.
+
+## Response Fields
+
+- `payment_token` (string): Token to identify this payment.
+- `refresh_token` (string): Updated access token for next calls.
+- `transaction_status` (string): Status of this payment.
+- `public_person_id` (string): Unique Person identification for future actions.
+- `public_card_id` (string): Unique Credit Card identification for future actions.
+- `totals` (object): The payment totals:
+  - `amount` (float): Amount in default region asset.
+  - `asset` (string): Asset used in this amount.
+  - `original_amount` (float): Amount as informed by merchant.
+  - `original_asset` (string): Asset used in this originalAmount.
+  - `customer_fees` (float): Total calculated fee assigned to customer.
+  - `customer_amount` (float): Total amount for customer (amount + customer_fees).
+- `customer_fees` (object): List of incident customer fees and respective values.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+### Body Raw(json)
+
+```jsx title="json"
+{
+    "contract_id": "MY_CONTRACT_ID",
+    "reference_id": "MY_REFERENCE_ID",
+    "notification_url": "https://my.notification.url/callback/",
+    "public_person_id": "MY_PUBLIC_PERSON_ID",
+    "public_card_id": "MY_PUBLIC_CARD_ID",
+    "payment": {
+        "method": "CREDITCARD",
+        "amount": 123.45,
+        "asset": "BRL",
+        "installments": "1",
+        "delay_capture": false,
+        "soft_descriptor": "SOFT_DESCRIPTOR"
+    },
+    "ip_address": "0.0.0.0",
+    "extra_data": {
+        "my-conciliation-number": "xxxxxx"
+    },
+    "authentication": {
+        "cavv": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+        "xid": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+        "eci": "05",
+        "version": "2.1.0",
+        "dstrans_id": "DIR_SERVER_TID"
+    }
+}
+```
+
+### Example Request
+
+<Tabs>
+  <TabItem value="credit-card-2ds" label="200 - Credit Card (2DS)">
+    #### Example Request
+      ```jsx title="200 - Credit Card (2DS)"
+          curl --location 'https://api-sandbox.epag.io/checkout/sendPayment' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "contract_id": "MY_CONTRACT_ID",
+              "reference_id": "MY_REFERENCE_ID",
+              "notification_url": "https://my.notification.url/callback/",
+              "public_person_id": "MY_PUBLIC_PERSON_ID",
+              "public_card_id": "MY_PUBLIC_CARD_ID",
+              "payment": {
+                  "method": "CREDITCARD",
+                  "amount": 123.45,
+                  "asset": "BRL",
+                  "installments": "1",
+                  "soft_descriptor": "SOFT_DESCRIPTOR"
+              },
+              "ip_address": "0.0.0.0",
+              "extra_data": {
+                  "my-conciliation-number": "xxxxxx"
+              }
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "refresh_token": "MY_ACCESS_TOKEN",
+            "transaction_status": "PROCESSING",
+            "payment_token": "da0612b4-e0b6-46d5-bb1f-dfc1b12e6568",
+            "public_person_id": "MY_PUBLIC_PERSON_ID",
+            "public_card_id": "MY_PUBLIC_CARD_ID",
+            "totals": {
+              "amount": 123.45,
+              "original_amount": 123.45,
+              "original_asset": "BRL",
+              "customer_fees": 123.45,
+              "customer_amount": 123.45,
+              "asset": "BRL"
+            },
+            "customer_fees": {}
+          }
+      ```
+  </TabItem>
+  <TabItem value="credit-card-2ds-with-pre-auth" label="200 - Credit Card 2DS With Pre-Auth">
+    #### Example Request
+      ```jsx title="200 - Credit Card 2DS With Pre-Auth"
+          curl --location 'https://api-sandbox.epag.io/checkout/sendPayment' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "contract_id": "MY_CONTRACT_ID",
+              "reference_id": "MY_REFERENCE_ID",
+              "notification_url": "https://my.notification.url/callback/",
+              "public_person_id": "MY_PUBLIC_PERSON_ID",
+              "public_card_id": "MY_PUBLIC_CARD_ID",
+              "payment": {
+                  "method": "CREDITCARD",
+                  "amount": 123.45,
+                  "asset": "BRL",
+                  "installments": "1",
+                  "delay_capture": true,
+                  "soft_descriptor": "SOFT_DESCRIPTOR"
+              },
+              "ip_address": "0.0.0.0",
+              "extra_data": {
+                  "my-conciliation-number": "xxxxxx"
+              }
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "refresh_token": "MY_ACCESS_TOKEN",
+            "transaction_status": "PROCESSING",
+            "payment_token": "da0612b4-e0b6-46d5-bb1f-dfc1b12e6568",
+            "public_person_id": "MY_PUBLIC_PERSON_ID",
+            "public_card_id": "MY_PUBLIC_CARD_ID",
+            "totals": {
+              "amount": 123.45,
+              "original_amount": 123.45,
+              "original_asset": "BRL",
+              "customer_fees": 123.45,
+              "customer_amount": 123.45,
+              "asset": "BRL"
+            },
+            "customer_fees": {}
+          }
+      ```
+  </TabItem>
+  <TabItem value="credit-card-external-3ds" label="200 - Credit Card (External 3DS)">
+    #### Example Request
+      ```jsx title="200 - Credit Card (External 3DS)"
+          curl --location 'https://api-sandbox.epag.io/checkout/sendPayment' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "contract_id": "MY_CONTRACT_ID",
+              "reference_id": "MY_REFERENCE_ID",
+              "notification_url": "https://my.notification.url/callback/",
+              "public_person_id": "MY_PUBLIC_PERSON_ID",
+              "public_card_id": "MY_PUBLIC_CARD_ID",
+              "payment": {
+                  "method": "CREDITCARD",
+                  "amount": 123.45,
+                  "asset": "BRL",
+                  "installments": "1",
+                  "soft_descriptor": "SOFT_DESCRIPTOR"
+              },
+              "ip_address": "0.0.0.0",
+              "extra_data": {
+                  "my-conciliation-number": "xxxxxx"
+              },
+              "authentication": {
+                  "cavv": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+                  "xid": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+                  "eci": "05",
+                  "version": "2.1.0",
+                  "dstrans_id": "DIR_SERVER_TID"
+              }
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "refresh_token": "MY_ACCESS_TOKEN",
+            "transaction_status": "PROCESSING",
+            "payment_token": "da0612b4-e0b6-46d5-bb1f-dfc1b12e6568",
+            "public_person_id": "MY_PUBLIC_PERSON_ID",
+            "public_card_id": "MY_PUBLIC_CARD_ID",
+            "totals": {
+              "amount": 123.45,
+              "original_amount": 123.45,
+              "original_asset": "BRL",
+              "customer_fees": 123.45,
+              "customer_amount": 123.45,
+              "asset": "BRL"
+            },
+            "customer_fees": {}
+          }
+      ```
+  </TabItem>
+  <TabItem value="debit-card-external-3ds" label="200 - Debit Card (External 3DS)">
+    #### Example Request
+      ```jsx title="200 - Debit Card (External 3DS)"
+          curl --location 'https://api-sandbox.epag.io/checkout/sendPayment' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "contract_id": "MY_CONTRACT_ID",
+              "reference_id": "MY_REFERENCE_ID",
+              "notification_url": "https://my.notification.url/callback/",
+              "public_person_id": "MY_PUBLIC_PERSON_ID",
+              "public_card_id": "MY_PUBLIC_CARD_ID",
+              "payment": {
+                  "method": "DEBITCARD",
+                  "amount": 123.45,
+                  "asset": "BRL",
+                  "installments": "1",
+                  "soft_descriptor": "SOFT_DESCRIPTOR"
+              },
+              "ip_address": "0.0.0.0",
+              "extra_data": {
+                  "my-conciliation-number": "xxxxxx"
+              },
+              "authentication": {
+                  "cavv": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+                  "xid": "BwABBylVaQAAAAFwllVpAAAAAAA=",
+                  "eci": "05",
+                  "version": "2.1.0",
+                  "dstrans_id": "DIR_SERVER_TID"
+              }
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "refresh_token": "MY_ACCESS_TOKEN",
+            "transaction_status": "PROCESSING",
+            "payment_token": "da0612b4-e0b6-46d5-bb1f-dfc1b12e6568",
+            "public_person_id": "MY_PUBLIC_PERSON_ID",
+            "public_card_id": "MY_PUBLIC_CARD_ID",
+            "totals": {
+              "amount": 123.45,
+              "original_amount": 123.45,
+              "original_asset": "BRL",
+              "customer_fees": 123.45,
+              "customer_amount": 123.45,
+              "asset": "BRL"
+            },
+            "customer_fees": {}
+          }
+      ```
+  </TabItem>
+</Tabs>

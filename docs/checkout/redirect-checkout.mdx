@@ -1,0 +1,197 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Redirect Checkout
+
+```jsx
+https://api-sandbox.epag.io/checkout/generate
+```
+
+Utilizing this approach, merchants have access to the full suite of configuration options within our checkout system. Rather than fetching our JavaScript into their platform, they can redirect customers to our secure environment, where the transaction details are gathered and the submission process is completed.
+
+Generates a URL to quick access the checkout page.
+- `asset` (required/string): Reference code for asset for the sale's amount.
+- `referenceId` (required/string): External code created by merchant to reference the payment.
+- `contractId` (required/string): Merchant's contract id to be used in this sale.
+- `notificationUrl` (required/string): Url to notify when transaction is successful.
+- `amount` (required/float): Total amount of the payment. Value must have a maximum of two decimal places and must not be less than `BRL 1.00`.
+- `method` (required/string): Payment Method: Valid options: `CREDITCARD`, `DEBITCARD`, `PIX`, `BOLETO`, `OXXO`, `PAYNET`, `SPEI`, `PAYCASH`, `PICPAY`.
+- `paymentCountry` (required/string): Country code in ISO 3166-2 for the payment.
+- `paymentCurrency` (required/string): Currency code in ISO-4217 for the payment.
+- `expiresIn` (optional/int): The lifetime in minutes of the generated URL. Default: `5`.
+- `processPayment` (optional/boolean): Automatically process the payment. (`CREDITCARD`, `DEBITCARD` only). Default: `false`.
+- `delayCapture` (optional/boolean): Pre-authorizes the payment for later capture. Default: `false`.
+- `saveCard` (optional/boolean). Tokenizes card for future uses. It works only if `processPayment` = `true`. Otherwise, `saveCard` will be always `true`. Default: `true`.
+- `pixDirect` (optional/boolean). `true` will show the QR code for `PIX` payment without collecting any data from the payer. Nevertheless, merchants can still send data they want to link to the transaction and have the data stored. Default: `false`.
+- `cardInstallments` (optional/int): Number of installments. Used if method is equal to `CREDITCARD`. Default: `1`.
+- `expirationDate` (optional/date/YYYY-MM-DD). Expiration date. Used if method is equal to `BOLETO`, `OXXO`, `PAYNET`, `PICPAY`. Default: `5 days` of current date.
+- `boletoLine1` (optional/string): First line string to introduce as instructions to cashier and final client. Used if method is equal to `BOLETO`.
+- `boletoLine2` (optional/string): Second line string to introduce as instructions to cashier and final client. Used if method is equal to `BOLETO`.
+- `boletoLine3` (optional/string): Third line string to introduce as instructions to cashier and final client. Used if method is equal to `BOLETO`.
+- `boletoLogo` (optional/string): The HTTP/Data URL of your logo (must be JPG or PNG format and it is recommended to be proportional to 200 x 45 pixels). If omitted, the bank logo will be used. Used if method is equal to `BOLETO`.
+- `description` (optional/string): This is a message that goes attached to the transaction and will show at the recipient's bank statement. Used if method is equal to `OXXO`, `PAYNET` or `SPEI`.
+- `logo` (optional/string): The HTTP/Data URL of your logo (must be JPG or PNG format and it is recommended to be proportional to 200 x 45 pixels). If omitted, no logo will be displayed. Used if method is equal to `OXXO`, `PAYNET` or `SPEI`.
+- `supportText` (optional/string): Text that will be sent in the footer of the email that is sent to the customer, so that he can contact you in case of doubts (e.g. Questions? Email [support@mysite.com](mailto:support@mysite.com))
+- `returnUrl` (optional/string): Url to redirect the customer when checkout is finished.
+- `addressAdditional` (optional/string): Additional information for this address (e.g. department).
+- `addressCity` (optional/string): Billing address city.
+- `addressCountry` (optional/string): Country code as ISO 3166-1 alpha-2 code.
+- `addressLocality` (optional/string): Billing address locality (e.g. neighborhood).
+- `addressMain` (optional/string): Main information of the address (e.g. street or Avenue).
+- `addressNumber` (optional/string): Number for this address.
+- `addressState` (optional/string): Billing address state code.
+- `addressZipCode` (optional/string): Billing address zip code.
+- `personBirth` (optional/date/YYYY-MM-DD): Date of birth.
+- `personEmail` (optional/string): Person's email provided to the merchant.
+- `personFirstName` (optional/string): First name of this person.
+- `personPhone` (optional/string): Billing address telephone.
+- `personPhoneArea` (optional/int/max 2 digits): Number of phone area code.
+- `personPhoneCountry` (optional/int/max 2 digits): Number of country phone code.
+- `personSurname` (optional/string): Surname of this person.
+- `personTaxId` (optional/string): Unique identifier for this person in country tax system (e.g. in Brazil: CPF).
+- `disableDob` (optional/boolean): Hides the date of birth. Default: `false`.
+- `lockEmail` (optional/boolean): Prevents edit the person's email. Default: `false`.
+- `buttonLabel` (optional/string): String that defines the widget button text.
+- `buttonColor` (optional/css color): Valid CSS color for the button. Default: `#3375C9`.
+- `buttonTextColor` (optional/css color): Valid CSS color for the button text. Default: `#FFFFFF`.
+- `lightboxLogoUrl` (optional/string): The URL of your logo (180 x 30 pixels) beginning with _https_.
+- `lightboxPrimaryColor` (optional/css color): Color applied to header. Default: `#303740`.
+- `lightboxSecondaryColor` (optional/css color): Color applied to action buttons. Default: `#314259`.
+- `lightboxAccentColor` (optional/css color): Color applied to input focus and active stepper. Default: `#027BE3`.
+- `lightboxPositiveColor` (optional/css color): Color applied to success icon and success messages. Default: `#A5DC86`.
+- `lightboxNegativeColor` (optional/css color): Color applied to error icon and error messages. Default: `#F27474`.
+- `lightboxInfoColor` (optional/css color): Color applied to loader icon and info messages. Default: `#F8BB86`.
+- `lightboxWarningColor` (optional/css color): Color applied to warning icon and warning messages. Default: `#F2C037`.
+- `lightboxAddressBarColor` (optional/css color): Color applied to address bar when in mobile. Default: `#292F36`.
+- `lightboxCompletePurchaseButtonLabel` (optional/string): String that defines the button's complete purchase text in boleto success feedback page.
+- `lightboxDisableAddress` (optional/boolean): If `true` disables the user's address collection step. Default: `false`.
+- `lightboxPartialAddress` (optional/boolean): If `true` requires only user's zip code and number. Default: `false`.
+- `lightboxUse3ds` (optional/boolean): If `true` enables 3DS authentication. Default: `false`.
+
+### Response Fields
+
+- `url` (string): The generated checkout page URL.
+- `expires_at` (date): Indicates that the page expires at that date and cannot be access after.
+- `refresh_token` (string): Updated access token for next calls.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+### Body Raw(json)
+
+```jsx title="json"
+{
+    "amount": 10.00,
+    "asset": "BRL",
+    "referenceId": "MY_REFERENCE_ID",
+    "contractId": "MY_CONTRACT_ID",
+    "method": "PIX",
+    "notificationUrl": "https://my.notification.url/callback/",
+    "lightboxDisableAddress": true,
+    "returnUrl": "https://mysite.com"
+}
+```
+
+### Example Request
+
+<Tabs>
+  <TabItem value="success" label="200 - Success">
+    #### Example Request
+      ```jsx title="200 - Success"
+          curl --location 'https://api-sandbox.epag.io/checkout/generate' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "amount": 10.00,
+              "asset": "BRL",
+              "referenceId": "MY_REFERENCE_ID",
+              "contractId": "MY_CONTRACT_ID",
+              "method": "PIX",
+              "notificationUrl": "https://my.notification.url/callback/",
+              "lightboxDisableAddress": true,
+              "returnUrl": "https://mysite.com"
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "url": "MY_CHECKOUT_URL",
+            "expires_at": "2023-09-28T17:34:12.59299-03:00",
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+  <TabItem value="bad-request" label="400 - Bad Request">
+    #### Example Request
+      ```jsx title="400 - Bad Request"
+          curl --location 'https://api-sandbox.epag.io/checkout/generate' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN' \
+          --data '{
+              "amount": 10.00,
+              "asset": "BRL",
+              "referenceId": "MY_REFERENCE_ID",
+              "contractId": "MY_CONTRACT_ID",
+              "notificationUrl": "https://my.notification.url/callback/",
+              "lightboxDisableAddress": true,
+              "returnUrl": "https://mysite.com"
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-01-18T21:10:09.865+0000",
+            "status": 400,
+            "error": "Bad Request",
+            "message": "method: must not be null",
+            "path": "/checkout/generate",
+            "errors": [
+              {
+                "code": "00.01.0044",
+                "description": "method: must not be null"
+              }
+            ],
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
+      ```
+  </TabItem>
+  <TabItem value="unauthorized" label="401 - Unauthorized">
+    #### Example Request
+      ```jsx title="401 - Unauthorized"
+          curl --location 'https://api-sandbox.epag.io/checkout/generate' \
+          --header 'X-Auth-Token: INVALID_ACCESS_TOKEN' \
+          --data '{
+              "amount": 10.00,
+              "asset": "BRL",
+              "referenceId": "MY_REFERENCE_ID",
+              "contractId": "MY_CONTRACT_ID",
+              "method": "PIX",
+              "notificationUrl": "https://my.notification.url/callback/",
+              "lightboxDisableAddress": true,
+              "returnUrl": "https://mysite.com"
+          }'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-01-16T19:52:18.186+0000",
+            "status": 401,
+            "error": "Unauthorized",
+            "message": "Access Denied",
+            "path": "/checkout/generate"
+          }
+      ```
+  </TabItem>
+</Tabs>

@@ -1,0 +1,176 @@
+---
+displayed_sidebar: docSidebar
+sidebar_position: 17
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# List Contracts
+
+```jsx
+https://api-sandbox.epag.io/merchant/contracts/list
+```
+
+## Merchant
+
+These methods offer merchants a way to get data about their accounts
+
+## Retrieve Merchant Contracts List
+
+This endpoint is used to retrieve a list of merchant contracts, which are used to define a set of business rules like payment methods, fees, payment, and settlement cycles. It is a mandatory field for all transactions.
+
+It can be used to segregate payment activity between online stores. For example, if a merchant has a website that sells product A globally and another one that sells product B in Mexico, the merchant can segregate those activities by having 2 different contracts (or projects) within their accounts.
+
+Contracts also have a type. There are three types of contracts: <code>PAYIN</code>, <code>PAYOUT</code>, and <code>ID_VALIDATION</code>.
+
+### Response
+
+The response for this request can be represented as a JSON schema:
+
+```jsx title="JSON"
+{
+    "type": "object",
+    "properties": {
+        "refresh_token": { "type": "string" },
+        "contracts": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "createdAt": { "type": "string" },
+                    "contractType": { "type": "string" },
+                    "name": { "type": "string" },
+                    "active": { "type": "boolean" },
+                    "id": { "type": "string" },
+                    "methods": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "country": { "type": "string" },
+                                "fees": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "country": { "type": "string" },
+                                            "amount": { "type": "number" },
+                                            "method": { "type": "string" },
+                                            "endDate": { "type": "string" },
+                                            "percentage": { "type": "number" },
+                                            "active": { "type": "boolean" },
+                                            "type": { "type": "string" },
+                                            "value": { "type": "string" },
+                                            "startDate": { "type": "string" }
+                                        }
+                                    }
+                                },
+                                "name": { "type": "string" },
+                                "active": { "type": "boolean" },
+                                "currency": { "type": "string" }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "timestamp": { "type": "string" },
+        "status": { "type": "number" },
+        "error": { "type": "string" },
+        "message": { "type": "string" },
+        "path": { "type": "string" }
+    }
+}
+```
+
+This JSON schema represents the structure of the response for the merchant contracts list request.
+
+| AUTHORIZATION | API Key         | 
+| ------------- | --------------- |
+| Key           | X-Auth-Token    |
+| Value         | MY_ACCESS_TOKEN |
+
+#### Example Request
+
+<Tabs>
+  <TabItem value="success" label="200 - Success" default>
+    #### Example Request
+      ```jsx title="200 - Authenticated"
+        curl --location 'https://api-sandbox.epag.io/merchant/contracts/list' \
+        --header 'X-Auth-Token: MY_ACCESS_TOKEN'
+      ```
+    
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ``` 
+      ```jsx title="Body"
+        {
+        "refresh_token": "MY_ACCESS_TOKEN",
+        "contracts": [
+                    {
+                    "createdAt": "2017-08-10T19:05:59.026",
+                    "contractType": "PAYIN",
+                    "name": "Storvo",
+                    "active": true,
+                    "id": "da51f472-d823-4120-b75c-ad5e10b1c02e",
+                    "methods": [
+                        {
+                        "country": "Brasil",
+                        "fees": [
+                            {
+                            "country": "BR",
+                            "amount": 0,
+                            "method": "BOLETO",
+                            "endDate": "2050-11-30",
+                            "percentage": 3.9,
+                            "active": true,
+                            "type": "TRANSACTION_FEE",
+                            "value": "3.90%",
+                            "startDate": "2022-07-05"
+                            },
+                            {
+                            "country": "BR",
+                            "amount": 0.29,
+                            "method": "BOLETO",
+                            "endDate": "2050-11-30",
+                            "percentage": 0,
+                            "active": true,
+                            "type": "PLATFORM_FEE",
+                            "value": "USD 0.29",
+                            "startDate": "2022-07-05"
+                            }
+                        ],
+                        "name": "BOLETO",
+                        "active": true,
+                        "currency": "BRL"
+                        }
+                    ]
+                    }
+                ]
+                }
+      ```      
+  </TabItem>
+  <TabItem value="unauthorized" label="401 - Unauthorized">
+    #### Example Request
+      ```jsx title="401 - Unauthorized"
+        curl --location 'https://api-sandbox.epag.io/merchant/contracts/list' \
+        --header 'X-Auth-Token: INVALID_ACCESS_TOKEN'
+      ```
+
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+            {
+            "timestamp": "2024-01-15T19:50:19.036+0000",
+            "status": 401,
+            "error": "Unauthorized",
+            "message": "Access Denied",
+            "path": "/merchant/contracts/list"
+            }
+      ```
+  </TabItem>
+</Tabs>

@@ -1,0 +1,117 @@
+---
+displayed_sidebar: docSidebar
+sidebar_position: 13
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Get Access Token
+
+```jsx
+https://api-sandbox.epag.io/auth
+```
+
+## Auth Request
+
+Requests a new refreshed access token to be used on every authenticated endpoint. Each token is configured to expire after 5 minutes.
+
+- Method: POST
+- Base URL: https://api-sandbox.epag.io
+- Endpoint: /auth
+
+### Request Body
+
+- Type: form-data
+
+### Response
+
+The response for this request can be documented as a JSON schema:
+
+```jsx title="json"
+{
+  "type": "object",
+  "properties": {
+    "token": { "type": "string" },
+    "user": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "username": { "type": "string" },
+        "name": { "type": "string" },
+        "enable": { "type": "boolean" },
+        "open": { "type": "boolean" },
+        "role": { "type": "string" },
+        "merchant_id": { "type": "string" }
+      }
+    },
+    "version": { "type": "string" }
+  }
+}
+```
+
+### Body - formdata
+
+| API Key & Secret | Description | 
+| --------- | ------------- |
+| apiKey    | MY_API_KEY    |
+|           | A key that can be used to authenticate |
+| apiSecret | MY_API_SECRET | 
+|           | A secret that can be used to authenticate |
+
+<Tabs>
+  <TabItem value="authenticated" label="200 - Authenticated" default>
+    #### Example Request
+      ```jsx title="200 - Authenticated"
+        curl --location 'https://api-sandbox.epag.io/auth' \
+        --form 'apiKey="MY_API_KEY"' \
+        --form 'apiSecret="MY_API_SECRET"'
+      ```
+    
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ``` 
+      ```jsx title="Body"
+      {
+          "token": "MY_ACCESS_TOKEN",
+          "user": {
+            "id": "acb14525-577b-46b5-b40f-861d78341ce2",
+            "username": "MY_USERNAME",
+            "name": "MY_NAME",
+            "enable": true,
+            "open": true,
+            "role": "USER",
+            "merchant_id": "acb14525-577b-46b5-b40f-861d78341ce2"
+          },
+            "version": "0.5.21"
+        }
+      ```      
+  </TabItem>
+  <TabItem value="unauthorized" label="401 - Unauthorized">
+    #### Example Request
+      ```jsx title="401 - Unauthorized"
+        curl --location 'https://api-sandbox.epag.io/auth' \
+        --form 'apiKey="INVALID_API_KEY"' \
+        --form 'apiSecret="INVALID_API_SECRET"'
+      ```
+    
+    #### Example Response
+      ```jsx title="Header"
+        Content-Type: application/json
+      ```  
+      ```jsx title="Body"
+          {
+            "timestamp": "2024-01-15T19:23:27.248+0000",
+            "status": 401,
+            "error": "Unauthorized",
+            "message": "Access Denied",
+            "path": "/auth"
+          }
+      ```
+
+  </TabItem>
+</Tabs>
+
+
+
