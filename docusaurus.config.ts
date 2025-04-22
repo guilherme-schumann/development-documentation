@@ -7,7 +7,7 @@ const config: Config = {
   tagline: 'Check out our guides and examples for integrating epag',
   favicon: 'img/Favicon-epag.ico',
   url: 'https://your-docusaurus-site.example.com',
-  baseUrl: '/epag',
+  baseUrl: '',
   markdown: {
     mermaid: true,
   },
