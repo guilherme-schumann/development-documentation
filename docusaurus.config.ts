@@ -98,7 +98,7 @@ const config: Config = {
         //   label: "Reports",
         // },
         {
-          to: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
+          to: "https://documenter.getpostman.com/view/27205548/2sB2iwGacC",
           label: "API References",
           position: "left",
         },
@@ -146,7 +146,7 @@ const config: Config = {
             // },
             {
               label: "API References",
-              to: "https://documenter.getpostman.com/view/32342679/2sA3JKcMvf",
+              to: "https://documenter.getpostman.com/view/27205548/2sB2iwGacC",
             },
             {
               label: "Releases",
