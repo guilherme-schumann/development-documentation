@@ -150,7 +150,7 @@ You can perform different types of calculations, such as:
 - <code>Subtraction (-):</code> Calculating differences between fields.  
 - <code>Multiplication (*):</code> Multiplying values for weighted calculations.  
 - <code>Division (/):</code> Finding ratios or percentages.  
-- <code>Percentage (%):</code> Calculating percentage values based on fields.  
+- <code>Module (%):</code> Calculating percentage values based on fields.
 
 Example: To calculate net revenue (Amount - Fee):
 

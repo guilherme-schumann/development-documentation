@@ -102,9 +102,12 @@ h6 {
   margin-right: 10%;
 }
 
-@media screen and (min-width: 997px){
-  .container .container-fluid {
+@media screen and (max-width: 997px){
+  footer > div.container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column-reverse !important;
+  }
+  .footer .footer__bottom {
+    margin: auto;
   }
 }

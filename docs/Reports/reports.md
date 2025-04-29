@@ -14,4 +14,4 @@ The Reports Module API allows merchants to generate customized reports in CSV fo
 ---
 
 ### Base URL
-<code>http://api.epag.io/ma/reports-module/</code>
+<code>https://api-epag.io/myreports/</code>

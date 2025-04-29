@@ -1,18 +1,18 @@
 ---
 displayed_sidebar: docSidebar
-sidebar_position: 20
+sidebar_position: 19
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Get Refund Request For a Payment
+# Get Refund Status
 
 ```jsx
-https://api-sandbox.epag.io/refund/payment/MY_PAYMENT_TOKEN
+https://api-sandbox.epag.io/refund/REFUND_ID
 ```
 
-Retrieves the all refund requests of a payment.
+Retrieves the status of a refund request.
 
 **Possible statuses:**
 
@@ -32,7 +32,7 @@ Retrieves the all refund requests of a payment.
   <TabItem value="success" label="200 - Success" default>
     #### Example Request
       ```jsx title="200 - Authenticated"
-          curl --location 'https://api-sandbox.epag.io/refund/payment/MY_PAYMENT_TOKEN' \
+          curl --location 'https://api-sandbox.epag.io/refund/REFUND_ID' \
           --header 'X-Auth-Token: MY_ACCESS_TOKEN'
       ```
     
@@ -41,20 +41,19 @@ Retrieves the all refund requests of a payment.
         Content-Type: application/json
       ``` 
       ```jsx title="Body"
-          [
-            {
-              "refund_id": 1,
-              "payment_token": "fa5ec5cc-d4d5-439e-8fb5-0368d409dc9b",
-              "created_at": "2019-06-25",
-              "refund_status": "PROCESSING"
-            }
-          ]
+          {
+            "refund_id": 1,
+            "payment_token": "fa5ec5cc-d4d5-439e-8fb5-0368d409dc9b",
+            "created_at": "2019-06-25",
+            "refund_status": "PROCESSING",
+            "refresh_token": "MY_ACCESS_TOKEN"
+          }
       ```      
   </TabItem>
   <TabItem value="not-found" label="404 - Not Found">
     #### Example Request
       ```jsx title="404 - Not Found"
-          curl --location 'https://api-sandbox.epag.io/refund/payment/MY_PAYMENT_TOKEN' \
+          curl --location 'https://api-sandbox.epag.io/refund/INVALID_REFUND_ID' \
           --header 'X-Auth-Token: MY_ACCESS_TOKEN'
       ```
 
@@ -64,15 +63,15 @@ Retrieves the all refund requests of a payment.
       ```  
       ```jsx title="Body"
           {
-            "timestamp": "2024-05-14T18:43:02.478+00:00",
+            "timestamp": "2024-05-14T18:17:01.793+00:00",
             "status": 404,
             "error": "Not Found",
-            "message": "This transaction id (MY_PAYMENT_TOKEN) could not be found.",
-            "path": "/refund/payment/MY_PAYMENT_TOKEN",
+            "message": "We couldn't find this refund ID, please check again.",
+            "path": "/refund/INVALID_REFUND_ID",
             "errors": [
               {
-                "code": "00.01.0038",
-                "description": "This transaction id (MY_PAYMENT_TOKEN) could not be found."
+                "code": "00.01.0068",
+                "description": "We couldn't find this refund ID, please check again."
               }
             ],
             "refresh_token": "MY_ACCESS_TOKEN"
@@ -82,8 +81,8 @@ Retrieves the all refund requests of a payment.
   <TabItem value="unauthorized" label="401 - Unauthorized">
     #### Example Request
       ```jsx title="401 - Unauthorized"
-          curl --location 'https://api-sandbox.epag.io/refund/REFUND_ID' \
-          --header 'X-Auth-Token: INVALID_ACCESS_TOKEN'
+          curl --location 'https://api-sandbox.epag.io/refund/INVALID_REFUND_ID' \
+          --header 'X-Auth-Token: MY_ACCESS_TOKEN'
       ```
 
     #### Example Response

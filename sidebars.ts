@@ -19,8 +19,8 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Auth',
       items: [
-        'auth/create-api-key',
         'auth/get-access-token',
+        'auth/create-api-key',
         'auth/list-api-key',
         'auth/revoke-api-key',
       ]
@@ -37,8 +37,8 @@ const sidebars: SidebarsConfig = {
       label: 'Refund',
       items: [
         'refund/refund-content',
-        'refund/get-refund-request',
-        'refund/get-refund-requests-for-a-payment',
+        'refund/get-refund-status',
+        'refund/get-refund-status-for-a-payment',
       ]
     },
     {
@@ -46,8 +46,14 @@ const sidebars: SidebarsConfig = {
       label: 'ID Validation',
       items: [
         'id-validation/id-validation',
-        'id-validation/brazil/brazil',
-        'id-validation/brazil/get-tax-id-document-status',
+        {
+          type: 'category',
+          label: 'Brazil',
+          items: [
+            'id-validation/brazil/brazil',
+            'id-validation/brazil/cpf-and-cnpj',
+          ],
+        },
       ]
     },
     {
@@ -88,7 +94,7 @@ const sidebars: SidebarsConfig = {
           items: [
             'payments/multiple-countries/credit-and-debit-card/credit-card',
             'payments/multiple-countries/credit-and-debit-card/credit-card-3ds',
-            'payments/multiple-countries/credit-and-debit-card/debit-cards',
+            'payments/multiple-countries/credit-and-debit-card/debit-card',
             {
               type: 'category',
               label: 'Token Payment',

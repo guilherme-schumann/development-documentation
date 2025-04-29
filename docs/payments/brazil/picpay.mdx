@@ -7,6 +7,25 @@ import TabItem from '@theme/TabItem';
   https://api-sandbox.epag.io/picpay/simple
 ```
 
+## Overview
+
+Integrating PicPay allows your business to accept payments from a wide user base in Brazil through a fast and convenient digital wallet.
+Our API facilitates the communication between your system, PicPay, and the customer's PicPay app.
+
+Here's a simplified breakdown of the payment process from a technical integration standpoint:
+1. **Merchant Initiates Payment Request:** Your system sends a payment request to the `Your PSP Name` API. This request includes essential transaction details like the amount and a unique order identifier.
+2. **QR Code Generation and Push Notification Trigger:** Upon receiving your request, the `Your PSP Name` system processes the information and interacts with the PicPay platform. This process triggers two simultaneous actions:
+    - A unique **QR code** for the transaction is generated and returned to your system via the API.
+    - A **push notification** is sent directly to the customer's mobile device, alerting them of the pending payment request within their PicPay app.
+3. **Payer Interaction via App:** The customer can proceed with the payment in one of two ways on their mobile device:
+    - They can **open the push notification**, which directly launches the relevant payment screen within their PicPay app.
+    - Alternatively, they can open their PicPay app and use the **in-app camera to scan the QR code** displayed by your system (e.g., on a computer screen or a physical display).
+4. **Payer Authorizes Payment:** Within the PicPay app, the customer reviews the transaction details (amount, merchant) and explicitly **authorizes the payment**, typically by entering their PicPay PIN or using biometric authentication.
+5. **Payment Confirmation:** Once the customer successfully authorizes the payment in the PicPay app, the PicPay platform confirms the transaction. The `Your PSP Name` system receives this confirmation in real-time and promptly **notifies your system** (e.g., via a webhook) about the successful payment, allowing you to finalize the order or service.
+
+This streamlined process ensures a quick and user-friendly payment experience for your customers while providing your business with efficient and confirmed transactions. Refer to the subsequent sections of this documentation for detailed API specifications and integration guidelines.
+
+
 ## PicPay Flow
 
 ```mermaid

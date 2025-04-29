@@ -7,19 +7,17 @@ sidebar_position: 4
 
 The following diagram covers the possible status flow for all our transactions. For every status change a webhook notification is sent to the merchant's API.
 
-<!-- ![Transaction Status Map](./img/transaction-status-map.png) -->
-
 ```mermaid
     graph TD;
     %% Define the main starting point
     CREATED ---> PRE_AUTHORIZED;
     CREATED ---> PROCESSING;
-    CREATED ---> DECLINED_OR_ERROR;
+    CREATED ---> DECLINED_OR_ERROR["DECLINED or ERROR"];
     CREATED ---> CANCELED;
 
     %% Processing Paths
     PROCESSING ---> PAID;
-    PROCESSING ---> DECLINED_OR_ERROR;
+    PROCESSING ---> DECLINED_OR_ERROR["DECLINED or ERROR"];
     PROCESSING ---> PRE_AUTHORIZED;
     PROCESSING ---> IN_ANALYSIS;
     PROCESSING ---> CANCELED;
@@ -30,7 +28,7 @@ The following diagram covers the possible status flow for all our transactions. 
 
     %% Analysis Paths
     IN_ANALYSIS ---> PAID;
-    IN_ANALYSIS ---> DECLINED_OR_ERROR;
+    IN_ANALYSIS ---> DECLINED_OR_ERROR["DECLINED or ERROR"];
     IN_ANALYSIS ---> CANCELED;
 
     %% Post-Payment Paths
@@ -43,7 +41,7 @@ The following diagram covers the possible status flow for all our transactions. 
     PARTIALLY_REFUNDED ---> DISPUTE;
     
     %% Refund Path
-    REFUNDED ---> |When we received a dispute notification after the transaction was refunded| POST_REFUND_DISPUTE;
+    REFUNDED ---> POST_REFUND_DISPUTE;
     
     %% Dispute Paths
     DISPUTE ---> DISPUTE_FINAL;
@@ -65,10 +63,7 @@ The following diagram covers the possible status flow for all our transactions. 
     style DISPUTE_REFUNDED fill:#7209b7, color:#fff, stroke:#000,stroke-width:0px, font-weight:600;
     style DISPUTE_RECOVERED fill:#54CC14, color:#fff, stroke:#000,stroke-width:0px, font-weight:600;
     style POST_REFUND_DISPUTE fill:#7209b7, color:#fff, stroke:#000,stroke-width:0px, font-weight:600;
-
 ```
-
-
 
 ## Status Description
 

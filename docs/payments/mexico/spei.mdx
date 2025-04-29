@@ -6,6 +6,23 @@ import TabItem from '@theme/TabItem';
 ```jsx
   https://api-sandbox.epag.io/spei/simple
 ```
+
+## Overview
+
+Integrating SPEI allows your business to offer a trusted and efficient payment method widely used by individuals and businesses in Mexico. Our gateway streamlines the process of generating the necessary payment instructions for your customers and provides you with instant confirmation of the payment.  
+
+Here's a simplified breakdown of the typical SPEI payment process from a technical integration standpoint:
+
+1. **Merchant Initiates Payment Request:** Your system sends a payment request to **our API**. This request includes essential transaction details such as the amount, a unique order identifier, and information needed to generate the SPEI payment instructions for your customer.
+2. **SPEI Payment Instruction Generation:** Upon receiving your request, **our system** processes the information and generates the specific details the customer needs to make a SPEI transfer to your account. This typically includes:
+    - Your business's `CLABE` (Clave Bancaria Estandarizada), the standardized 18-digit bank account number in Mexico.
+    - The `amount` to be transferred.
+    - A unique `reference number` or payment concept to help identify the transaction.
+3. **Presenting Payment Instructions to the Payer:** **Our API** returns these SPEI payment instructions to your merchant system. Your application (e.g., e-commerce checkout page, invoice, payment confirmation screen) then displays these instructions clearly to the customer, guiding them to initiate a SPEI transfer from their own bank account.
+4. **Payer Initiates SPEI Transfer:** The customer accesses their own online banking platform or mobile banking app provided by their bank in Mexico. They initiate a SPEI transfer using the CLABE, amount, and reference number/concept provided by your system.
+5. **Real-time Payment Processing and Confirmation:** The SPEI system, managed by the Bank of Mexico, processes the transfer in real-time. The funds are moved directly from the customer's bank account to your business's bank account within seconds.
+6. **Instant Notification of Payment Confirmation:** Once the SPEI transfer is successfully completed, **our system** receives immediate, real-time confirmation from the SPEI network. We then instantly **notify your system** (e.g., via a webhook) about the successful payment. This instant notification allows your business to confirm the order and provide the goods or services without delay.
+
 ## SPEI Flow
 
 ```mermaid

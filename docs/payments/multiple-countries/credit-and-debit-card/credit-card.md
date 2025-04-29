@@ -2,7 +2,7 @@
 displayed_sidebar: paymentsSidebar
 ---
 
-# Credit Cards
+# Credit Card
 
 ## Overview
 
@@ -16,7 +16,7 @@ This API enables credit card payments by providing a structured request payload 
 - `External 3DS Payment`: Supports external 3D Secure authentication for fraud prevention.
 - `Save Card/Tokenization`: Enables saving the card details for future transactions using tokenization.
 
-## 2DS Payment Flow
+## Payment Flow
 
 ```mermaid
 sequenceDiagram

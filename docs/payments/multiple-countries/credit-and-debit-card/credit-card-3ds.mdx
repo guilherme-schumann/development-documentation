@@ -2,11 +2,14 @@
 displayed_sidebar: paymentsSidebar
 ---
 
-# Credit Cards 3DS
+# Credit Card 3DS
 
 ## Overview
 
-This document details the **3D Secure (3DS) authentication process** for credit card transactions. 3DS authentication is an additional security layer that helps prevent fraud by requiring cardholder verification through the issuing bank.
+This document provides comprehensive details on the integrated **3D Secure (3DS) authentication and payment process** for credit card transactions conducted in the card-not-present environment. 3DS serves as a critical additional security layer, designed to combat online fraud by introducing a mandatory cardholder verification step handled directly by the cardholder's issuing bank.
+Only upon successful authentication, where the cardholder confirms their identity through methods like passwords, one-time codes, or biometric verification, does the payment transaction proceed to authorization and subsequent processing.
+This combined approach significantly enhances security for all parties involved and can offer merchants benefits such as reduced chargebacks and potential liability shift.
+
 
 ## How 3DS Works
 
@@ -17,6 +20,15 @@ This document details the **3D Secure (3DS) authentication process** for credit 
 5. The transaction is processed based on the authentication result.
 
 ## 3DS Card Payment Checkout Internal Authentication (epag)
+
+Merchants have the option to integrate and utilize their own MPI or an external third-party MPI to handle the 3D Secure authentication flow directly.
+
+However, if your business **does not wish to use, or does not have access to, an external MPI** and you want us to manage the entire 3D Secure authentication process on your behalf, **the use of our SDK is required for these 3DS transactions**.
+
+Our SDK is designed to abstract the complexities of the 3DS flow, acting as the necessary component to communicate with the cardholder's bank and complete the authentication when you are not using your own MPI. By utilizing **our SDK**, you enable us to handle the technical steps of 3DS seamlessly within your integration, ensuring a smoother experience and potential liability benefits with minimal development effort on your side regarding the MPI functionality.
+
+Therefore, if you are not processing 3DS through an external MPI and want **us** to handle it, please ensure your integration for 3DS transactions utilizes <a href="https://3ds.epag.io/scripts/client-v1.0.min.js" target="_blank" rel="noopener noreferrer"><b>our provided SDK</b></a>.
+
 
 ```mermaid
 sequenceDiagram

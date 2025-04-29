@@ -6,6 +6,20 @@ import TabItem from '@theme/TabItem';
 ```jsx
   https://api-sandbox.epag.io/oxxo/simple
 ```
+## Overview
+
+Integrating OXXO allows your business to reach a significant customer segment in Mexico. The OXXO payment method involves generating a payment slip or voucher that the customer then pays in cash at any OXXO convenience store. Our gateway simplifies the generation of this voucher and provides confirmation once the payment is made.  
+
+Here's a simplified breakdown of the typical OXXO payment process from a technical integration standpoint:
+1. **Merchant Initiates Payment Request:** Your system sends a payment request to **our API**. This request includes essential transaction details such as the amount, a unique order identifier, and any required customer information for generating the OXXO voucher.
+2. **OXXO Voucher Generation:** Upon receiving your request, **our system** processes the information and interacts with the OXXO payment network. This process generates a unique payment voucher containing a barcode and/or a reference number that the customer will use to pay.
+3. **Presenting the OXXO Voucher to the Payer:** **Our API** returns the data or a URL for the generated OXXO voucher to your merchant system. Your application (e.g., e-commerce checkout page, email confirmation) then presents this voucher to the customer. This is typically displayed digitally (with a barcode) and/or offered as a printable version.
+4. **Payer Makes the Payment at an OXXO Store:** The customer takes the generated OXXO voucher (either by showing the barcode on their phone or a printout, or using the reference number) to any of the numerous OXXO convenience stores in Mexico. They present the voucher details to the cashier and pay the amount due in cash.
+5. **Payment Confirmation (Asynchronous):** After the customer pays at the OXXO store, the payment information is processed through the OXXO network. Payment confirmation is typically not immediate and can take up to one business day to be fully processed and confirmed by the system.
+6. **Notification of Payment Confirmation:** Once **our system** receives the final confirmation from the OXXO network that the payment for the specific voucher has been successfully completed, it **notifies your system** (e.g., via a webhook) about the payment status. This notification allows your system to update the order status and proceed with fulfilling the service or shipping the goods.
+
+
+
 ## OXXO Flow
 ```mermaid
 sequenceDiagram

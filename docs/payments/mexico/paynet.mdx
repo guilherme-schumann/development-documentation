@@ -7,6 +7,19 @@ import TabItem from '@theme/TabItem';
   https://api-sandbox.epag.io/paynet/simple
 ```
 
+## Overview
+
+Integrating Paynet enables your business to serve customers who prefer to pay in cash or may not have access to traditional banking or credit cards. Our gateway simplifies the generation of the payment voucher or reference and provides you with a notification once the customer has completed the payment.
+
+Here's a simplified breakdown of the typical Paynet payment process from a technical integration standpoint:
+
+1. **Merchant Initiates Payment Request:** Your system sends a payment request to **our API**. This request includes essential transaction details such as the amount, a unique order identifier, and any necessary customer information for generating the Paynet reference.
+2. **Paynet Reference/Barcode Generation:** Upon receiving your request, **our system** processes the information and interacts with the Paynet network. This generates a unique payment reference number or a barcode that the customer will use to make the payment.
+3. **Presenting the Paynet Reference to the Payer:** **Our API** returns the generated Paynet reference data (e.g., the reference number, barcode image URL, or a link to a printable voucher) to your merchant system. Your application (e.g., e-commerce checkout page, confirmation email) then displays this information clearly to the customer, instructing them to use it to pay at a Paynet-affiliated location.
+4. **Payer Makes the Cash Payment at a Physical Location:** The customer takes the Paynet reference (either by showing it on their phone or a printout) to any of the numerous authorized retail locations in the Paynet network across Mexico (such as OXXO, 7-Eleven, Walmart, Farmacias del Ahorro, etc.). They present the reference to the cashier and pay the exact amount due in cash.
+5. **Payment Confirmation (Asynchronous):** After the customer pays at the physical location, the payment is recorded within the Paynet network. Confirmation of this payment is typically not instantaneous and is transmitted from the retail location through the Paynet system. This process can take up to one business day.
+6. **Notification of Payment Confirmation:** Once **our system** receives the final confirmation from the Paynet network that the payment for the specific reference has been successfully completed, it **notifies your system** (e.g., via a webhook) about the payment status. This notification allows your system to update the order status and proceed with fulfilling the service or shipping the goods.
+
 ## Paynet Flow
 
 ```mermaid

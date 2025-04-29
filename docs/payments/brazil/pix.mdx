@@ -7,14 +7,21 @@ import TabItem from '@theme/TabItem';
   https://api-sandbox.epag.io/pix/simple
 ```
 
-## Considerations
+## Overview
 
-This process is designed with a smart approach to handle the compulsory Tax ID verification for all international transactions in Brazil, while maintaining optimal conversion rates. The process facilitates:
+Integrating PIX is crucial for businesses in Brazil, providing access to the country's most popular and rapidly growing instant payment method. Our gateway simplifies the connection between your system, the Brazilian Instant Payment System (SPI) operated by the Central Bank, and the customer's banking application.
+Here's a simplified breakdown of the typical PIX payment process from a technical integration standpoint:
 
-- Immediate display of a QR code to the payer without the need for preliminary data collection, resulting in a higher conversion rate.
-  - In order to use this process just send the required fields as marked below.
-- Utilization of a CPF (Cadastro de Pessoas Físicas) linked to the transaction, which merchants have previously gathered, or the option to collect it on the checkout page—this method generally yields a lower conversion rate, but can be advantageous in certain scenarios based on the merchant's specific needs.
-  - In order to this process send the payer's CPF or CNPJ on the tax_id field. In the case of an invalid tax id the transaction may be declined.
+1. **Merchant Initiates Payment Request:** Your system sends a payment request to our API. This request includes essential transaction details such as the amount and a unique order identifier.
+2. **PIX Payment Details Generation:** Upon receiving your request, our system interacts with the PIX infrastructure. This process generates the necessary details for the customer to make the payment, typically resulting in:
+    - A **PIX QR Code** (dynamic or static) that encodes the payment information.
+    - A **"Pix Copy and Paste" string**, which is the text equivalent of the QR code data.
+3. **Presenting Payment Options to the User:** Our API returns the generated QR code data and/or the "Pix Copy and Paste" string to your merchant system. Your application (e.g., e-commerce checkout page, payment terminal) then presents these options to the customer. The customer can choose to either scan the QR code or copy the "Pix Copy and Paste" string.
+4. **Payer Interaction via Banking App:** The customer opens their banking app or digital wallet, which is connected to the PIX system. They select the PIX payment option and either:
+    - Use the app's camera to **scan the displayed QR code.**
+    - Select the "Pix Copy and Paste" option and **paste the previously copied string**. Alternatively, in some cases, the customer might be able to initiate the payment using a pre-registered PIX Key of the merchant, if that option is presented.
+5. **Payer Authorizes Payment:** Within their banking app, the customer reviews the transaction details (amount, merchant name) and authorizes the payment, typically by entering their banking password or using biometric authentication.
+6. **Payment Confirmation:** Once the customer successfully authorizes the payment in their banking app, the PIX system processes the transaction instantly. **Our system** receives real-time confirmation of the payment status and immediately **notifies your system** (e.g., via a webhook) about the successful payment, allowing you to fulfill the order or provide the service.
 
 ## PIX Flow
 

@@ -7,6 +7,22 @@ import TabItem from '@theme/TabItem';
   https://api-sandbox.epag.io/boleto/simple
 ```
 
+## Overview
+
+Integrating Boleto allows your business to reach a significant portion of the Brazilian population. Boleto is an offline payment method where a payment slip is generated, which the customer then pays through various channels. Our gateway facilitates the generation of this Boleto and notifies your system upon payment confirmation.
+
+Here's a simplified breakdown of the typical Boleto payment process from a technical integration standpoint:
+
+1. **Merchant Initiates Payment Request:** Your system sends a payment request to **our API**. This request includes essential transaction details such as the amount, a unique order identifier, and relevant customer information required for Boleto generation.
+2. **Boleto Generation:** Upon receiving your request, **our system** processes the information and generates the Boleto Bancário. This involves creating a unique payment slip with a barcode and a printable/viewable format.
+3. **Presenting the Boleto to the Payer:** **Our API** returns the data or a URL for the generated Boleto to your merchant system. Your application (e.g., e-commerce checkout page, customer portal) then presents this Boleto to the customer, usually as a PDF for printing or a digital barcode and number for online payment. The customer is instructed to save or print the Boleto.
+4. **Payer Makes the Payment:** The customer takes the generated Boleto (either printed or using the digital information) and makes the payment through one of the supported channels in Brazil. This can include:
+    - Paying with cash at banks, lottery agencies, post offices, or certain supermarkets.
+    - Paying electronically via internet banking or their mobile banking app by scanning the barcode or typing the barcode number.
+5. **Payment Confirmation (Asynchronous):** This is a key difference from instant payments like PIX. After the customer pays the Boleto, there is typically a processing time for the payment to be cleared and confirmed by the banking system. **Our system** receives this confirmation from the banking network, which can take from a few hours up to a few business days.
+6. **Notification of Payment Confirmation:** Once **our system** receives the final confirmation that the Boleto has been paid, it **notifies your system** (e.g., via a webhook) about the successful payment. This notification allows your system to update the order status and proceed with fulfilling the service or shipping the goods.
+
+
 ## Boleto Flow
 
 ```mermaid

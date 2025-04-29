@@ -2,11 +2,24 @@
 displayed_sidebar: paymentsSidebar
 ---
 
-# Debit Cards
+# Debit Card
 
 ## Overview
 
-This document details how to process **debit card payments**. Debit card transactions typically require **immediate fund availability** and may require **additional authentication** from the issuing bank.
+**Debit card payments** allow customers to pay for goods and services using funds available directly in their linked bank account. When a customer makes a purchase with a debit card, the amount is typically deducted from their account almost immediately or within a very short processing window. This means customers are spending their own existing money.  
+
+In contrast, **credit card payments** utilize a line of credit extended by the card issuer. When a customer pays with a credit card, they are essentially borrowing money, which they will repay to the issuer later, usually on a monthly billing cycle.  
+
+**Short Comparison:**
+    - **Debit Card:** Uses existing funds in a bank account; funds are debited immediately or very quickly.
+    - **Credit Card:** Uses a line of credit; payment is deferred to a later billing date.
+
+**Similarity to 3DS Authenticated Credit Card Transactions:**
+
+A key similarity exists between a standard debit card transaction and a 3D Secure (3DS) authenticated credit card transaction in terms of the verification step and the timing of fund confirmation.
+
+While the underlying funding mechanism differs (existing funds vs. credit line), both scenarios involve a crucial, often real-time, communication with the issuing bank to verify the validity of the transaction and the availability of the means to pay (either funds or authorized credit access verified through authentication) before the transaction is fully approved. This contrasts with non-3DS credit card transactions, where the primary authorization focuses on the card details and credit limit without the additional real-time cardholder verification by the issuer.
+
 
 ## How Debit Card Payments Work
 

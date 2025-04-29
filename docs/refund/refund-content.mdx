@@ -8,21 +8,25 @@ import TabItem from '@theme/TabItem';
 
 # Refund
 
+#### Base URL
 ```jsx
 https://api-sandbox.epag.io/refund
 ```
 
-To request a refund for a transaction, please note that partial refunds are possible only if the payment method permits.
+Whether a partial refund can be processed for a specific transaction depends on the original payment method used by the customer. The system will indicate if a partial refund is supported.
 
-Refunds should be issued in the same currency used for the original payment. At present, only transactions made in BRL are eligible for refunds.
+Refunds are automatically processed in the **original transaction currency**.
 
-The permissible time frame for refund requests is as follows from the date of payment:
+Refund requests can only be processed within the time limits specified for each payment method in the table below, measured from the original payment date:
 
 | Payment method | Time limit | 
 | -------------- | ---------- |
 | PIX            | 90 days    |
 | Creadit Card   | 6 months   |
 | BOLETO         | No limit   |
+
+
+Use this endpoint to issue refunds for eligible transactions processed through the system.
 
 ### Request Fields:
 
