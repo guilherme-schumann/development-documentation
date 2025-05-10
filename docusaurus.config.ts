@@ -85,18 +85,18 @@ const config: Config = {
           position: "left",
           label: "Checkout",
         },
-        // {
-        //   type: "docSidebar",
-        //   sidebarId: "payoutsSidebar",
-        //   position: "left",
-        //   label: "Payouts",
-        // },
-        // {
-        //   type: "docSidebar",
-        //   sidebarId: "reportsSidebar",
-        //   position: "left",
-        //   label: "Reports",
-        // },
+        {
+          type: "docSidebar",
+          sidebarId: "payoutsSidebar",
+          position: "left",
+          label: "Payouts",
+        },
+        {
+          type: "docSidebar",
+          sidebarId: "reportsSidebar",
+          position: "left",
+          label: "Reports",
+        },
         {
           to: "https://documenter.getpostman.com/view/27205548/2sB2iwGacC",
           label: "API References",
